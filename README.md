@@ -2,7 +2,7 @@
 
 Real-time cryptocurrency trading dashboard with live market data, interactive charts, portfolio tracking, and customizable drag-and-drop widgets.
 
-![CryptoLiveDash Preview](./docs/preview.png)
+![CryptoLiveDash Preview](./public/favicon.svg)
 
 > **Live Demo**: [https://crypto-live-dash.vercel.app](https://crypto-live-dash.vercel.app)
 
@@ -59,18 +59,18 @@ CryptoLiveDash is a high-performance React dashboard that streams real-time data
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| Framework | React 19 + TypeScript |
-| Build | Vite |
-| State | Redux Toolkit + RTK Query |
-| Charts | TradingView Lightweight Charts |
-| Styling | TailwindCSS |
-| DnD | @dnd-kit |
-| Routing | React Router v7 |
-| Testing | Vitest + React Testing Library |
-| CI/CD | GitHub Actions |
-| Deploy | Vercel |
+| Category  | Technology                     |
+| --------- | ------------------------------ |
+| Framework | React 19 + TypeScript          |
+| Build     | Vite                           |
+| State     | Redux Toolkit + RTK Query      |
+| Charts    | TradingView Lightweight Charts |
+| Styling   | TailwindCSS                    |
+| DnD       | @dnd-kit                       |
+| Routing   | React Router v7                |
+| Testing   | Vitest + React Testing Library |
+| CI/CD     | GitHub Actions                 |
+| Deploy    | Vercel                         |
 
 ## Quick Start
 
@@ -86,43 +86,52 @@ Open [http://localhost:3000](http://localhost:3000) — no API keys needed.
 ## Features
 
 ### Dashboard
+
 - Drag-and-drop widget grid with persistent layout
 - Customizable widget arrangement
 - Reset to default layout
 
 ### Trading Chart
+
 - Professional candlestick charts (TradingView)
 - Multiple timeframes (1m, 5m, 15m, 1H, 4H, 1D, 1W)
 - Volume overlay
 - Real-time candle updates via WebSocket
 
 ### Market Overview
+
 - Top 20 crypto pairs by volume
 - Live price updates
 - 24h change, high, low, volume
 
 ### Portfolio Tracker
+
 - Add/remove positions
 - Real-time P&L calculation
 - Total portfolio value and cost basis
 
 ### Watchlist
+
 - Track favorite coins
 - Live price cards with 24h stats
 
 ### Price Alerts
+
 - Set above/below price targets
 - Browser notifications on trigger
 
 ## Technical Challenges & Solutions
 
 ### Challenge 1: High-frequency WebSocket updates causing re-renders
+
 **Solution**: Used Redux Toolkit with memoized selectors and React.memo on price-heavy components. Only components subscribed to specific symbols re-render.
 
 ### Challenge 2: Chart performance with 500+ candles
+
 **Solution**: TradingView Lightweight Charts handles canvas rendering natively. Data transformation is memoized. Real-time updates use the `update()` method instead of `setData()`.
 
 ### Challenge 3: Persisting complex dashboard state
+
 **Solution**: Custom localStorage middleware in Redux slices with debounced writes to prevent excessive serialization.
 
 ## Scripts
