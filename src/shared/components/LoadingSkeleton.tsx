@@ -11,10 +11,7 @@ export function LoadingSkeleton({ className, lines = 3 }: LoadingSkeletonProps) 
       {Array.from({ length: lines }).map((_, i) => (
         <div
           key={i}
-          className={cn(
-            "h-4 bg-surface-tertiary rounded",
-            i === lines - 1 && "w-3/4",
-          )}
+          className={cn("h-4 bg-surface-tertiary rounded", i === lines - 1 && "w-3/4")}
         />
       ))}
     </div>

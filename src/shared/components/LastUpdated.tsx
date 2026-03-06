@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
 import { cn } from "@/shared/utils/cn";
+import { useEffect, useState } from "react";
 
 interface LastUpdatedProps {
   timestamp: number | null;
@@ -11,7 +11,6 @@ interface LastUpdatedProps {
 export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdatedProps) {
   const [, forceUpdate] = useState(0);
 
-  // Re-render every 10s to update relative time
   useEffect(() => {
     const interval = setInterval(() => forceUpdate((n) => n + 1), 10_000);
     return () => clearInterval(interval);
@@ -19,9 +18,7 @@ export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdate
 
   if (isMock) {
     return (
-      <span className={cn("text-[10px] text-yellow-500/70 font-medium", className)}>
-        Demo data
-      </span>
+      <span className={cn("text-[10px] text-yellow-500/70 font-medium", className)}>Demo data</span>
     );
   }
 
@@ -37,9 +34,7 @@ export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdate
 
   return (
     <span className={cn("text-[10px] text-muted/60", className)}>
-      {isLive && (
-        <span className="inline-block w-1 h-1 rounded-full bg-gain mr-1 align-middle" />
-      )}
+      {isLive && <span className="inline-block w-1 h-1 rounded-full bg-gain mr-1 align-middle" />}
       {label}
     </span>
   );

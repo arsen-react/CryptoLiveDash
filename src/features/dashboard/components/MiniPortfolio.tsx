@@ -25,7 +25,6 @@ export function MiniPortfolio() {
 
   return (
     <div className="text-xs">
-      {/* Summary */}
       <div className="flex items-center justify-between mb-3 pb-3 border-b border-border">
         <div>
           <p className="text-muted mb-0.5">Total Value</p>
@@ -40,7 +39,10 @@ export function MiniPortfolio() {
       {positions.length === 0 ? (
         <p className="text-muted text-center py-4">
           No positions yet.{" "}
-          <button onClick={() => navigate("/portfolio")} className="text-accent hover:text-accent-hover">
+          <button
+            onClick={() => navigate("/portfolio")}
+            className="text-accent hover:text-accent-hover"
+          >
             Add one
           </button>
         </p>

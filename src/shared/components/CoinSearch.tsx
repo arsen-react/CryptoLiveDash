@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
 import { useGetTickersQuery } from "@/features/market/marketApi";
 import { useDebounce } from "@/shared/hooks/useDebounce";
 import { formatPrice } from "@/shared/utils/formatters";
 import { generateMockTickers } from "@/shared/utils/mockData";
+import { useMemo, useState } from "react";
 import { PriceChange } from "./PriceChange";
 
 interface CoinSearchProps {
@@ -45,9 +45,7 @@ export function CoinSearch({ onSelect, placeholder = "Search coin..." }: CoinSea
             className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-surface-hover transition-colors text-left"
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">
-                {ticker.symbol.replace("USDT", "")}
-              </span>
+              <span className="text-sm font-medium">{ticker.symbol.replace("USDT", "")}</span>
               <span className="text-xs text-muted">/USDT</span>
             </div>
             <div className="flex items-center gap-3">

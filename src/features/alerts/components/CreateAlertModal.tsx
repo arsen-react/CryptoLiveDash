@@ -1,11 +1,11 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { CoinSearch } from "@/shared/components/CoinSearch";
+import { Modal } from "@/shared/components/Modal";
+import { cn } from "@/shared/utils/cn";
+import { formatPrice } from "@/shared/utils/formatters";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Modal } from "@/shared/components/Modal";
-import { CoinSearch } from "@/shared/components/CoinSearch";
-import { useAppDispatch, useAppSelector } from "@/app/store";
 import { addAlert } from "../alertsSlice";
-import { formatPrice } from "@/shared/utils/formatters";
-import { cn } from "@/shared/utils/cn";
 
 interface FormData {
   targetPrice: number;
@@ -20,8 +20,8 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
   const dispatch = useAppDispatch();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [condition, setCondition] = useState<"above" | "below">("above");
-  const liveTicker = useAppSelector(
-    (state) => selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
+  const liveTicker = useAppSelector((state) =>
+    selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
   );
 
   const {
@@ -35,7 +35,6 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
     if (!selectedSymbol) return;
     dispatch(addAlert({ symbol: selectedSymbol, targetPrice: data.targetPrice, condition }));
 
-    // Request notification permission
     if (Notification.permission === "default") {
       Notification.requestPermission();
     }
@@ -59,13 +58,14 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="flex items-center justify-between p-3 bg-surface rounded-lg">
             <div>
-              <span className="text-sm font-semibold">
-                {selectedSymbol.replace("USDT", "")}
-              </span>
+              <span className="text-sm font-semibold">{selectedSymbol.replace("USDT", "")}</span>
               <span className="text-xs text-muted ml-1">/USDT</span>
               {liveTicker && (
                 <span className="text-xs text-muted ml-2">
-                  Current: <span className="text-white font-mono">${formatPrice(parseFloat(liveTicker.price))}</span>
+                  Current:{" "}
+                  <span className="text-white font-mono">
+                    ${formatPrice(parseFloat(liveTicker.price))}
+                  </span>
                 </span>
               )}
             </div>
@@ -117,9 +117,7 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
               placeholder="0.00"
               className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors font-mono"
             />
-            {errors.targetPrice && (
-              <p className="text-xs text-loss mt-1">Enter a valid price</p>
-            )}
+            {errors.targetPrice && <p className="text-xs text-loss mt-1">Enter a valid price</p>}
           </div>
 
           <div className="flex gap-2 pt-2">

@@ -11,7 +11,6 @@ export default function AlertsList() {
   const alerts = useAppSelector((state) => state.alerts.alerts);
   const liveTickers = useAppSelector((state) => state.market.liveTickers);
 
-  // Check alerts against live prices
   useEffect(() => {
     for (const alert of alerts) {
       if (!alert.active) continue;
@@ -51,7 +50,6 @@ export default function AlertsList() {
         </button>
       </div>
 
-      {/* Active Alerts */}
       <h3 className="text-sm font-medium text-muted mb-2">Active ({activeAlerts.length})</h3>
       {activeAlerts.length === 0 ? (
         <div className="widget-card widget-body text-center text-muted py-8 mb-6">
@@ -121,7 +119,6 @@ export default function AlertsList() {
         </div>
       )}
 
-      {/* Triggered Alerts */}
       {triggeredAlerts.length > 0 && (
         <>
           <h3 className="text-sm font-medium text-muted mb-2">

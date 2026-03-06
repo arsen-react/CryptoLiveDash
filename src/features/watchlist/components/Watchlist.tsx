@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/app/store";
-import { removeFromWatchlist, addToWatchlist } from "../watchlistSlice";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { setSelectedSymbol } from "@/features/market/marketSlice";
-import { useNavigate } from "react-router-dom";
-import { Modal } from "@/shared/components/Modal";
 import { CoinSearch } from "@/shared/components/CoinSearch";
+import { Modal } from "@/shared/components/Modal";
 import { PriceChange } from "@/shared/components/PriceChange";
 import { formatPrice, formatVolume } from "@/shared/utils/formatters";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { addToWatchlist, removeFromWatchlist } from "../watchlistSlice";
 
 export default function Watchlist() {
   const dispatch = useAppDispatch();
@@ -66,9 +66,7 @@ export default function Watchlist() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <span className="font-semibold text-sm">
-                      {item.symbol.replace("USDT", "")}
-                    </span>
+                    <span className="font-semibold text-sm">{item.symbol.replace("USDT", "")}</span>
                     <span className="text-xs text-muted ml-1">/USDT</span>
                   </div>
                   <button
@@ -83,9 +81,7 @@ export default function Watchlist() {
                 </div>
 
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-xl font-mono font-semibold">
-                    ${formatPrice(price)}
-                  </span>
+                  <span className="text-xl font-mono font-semibold">${formatPrice(price)}</span>
                   <PriceChange value={change} />
                 </div>
 

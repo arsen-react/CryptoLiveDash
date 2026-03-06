@@ -1,9 +1,9 @@
-import { useAppSelector, useAppDispatch } from "@/app/store";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { setSelectedSymbol } from "@/features/market/marketSlice";
 import { PriceChange } from "@/shared/components/PriceChange";
+import { cn } from "@/shared/utils/cn";
 import { formatPrice } from "@/shared/utils/formatters";
 import { useNavigate } from "react-router-dom";
-import { cn } from "@/shared/utils/cn";
 
 export function MiniWatchlist() {
   const dispatch = useAppDispatch();
@@ -16,7 +16,10 @@ export function MiniWatchlist() {
     return (
       <p className="text-xs text-muted text-center py-4">
         No coins in watchlist.{" "}
-        <button onClick={() => navigate("/watchlist")} className="text-accent hover:text-accent-hover">
+        <button
+          onClick={() => navigate("/watchlist")}
+          className="text-accent hover:text-accent-hover"
+        >
           Add some
         </button>
       </p>

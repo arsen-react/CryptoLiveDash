@@ -1,8 +1,8 @@
-import { type ReactNode } from "react";
+import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
+import { cn } from "@/shared/utils/cn";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { cn } from "@/shared/utils/cn";
-import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
+import { type ReactNode } from "react";
 
 interface WidgetWrapperProps {
   id: string;
@@ -12,8 +12,9 @@ interface WidgetWrapperProps {
 }
 
 export function WidgetWrapper({ id, title, children, onRemove }: WidgetWrapperProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id,
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -24,10 +25,7 @@ export function WidgetWrapper({ id, title, children, onRemove }: WidgetWrapperPr
     <div
       ref={setNodeRef}
       style={style}
-      className={cn(
-        "widget-card",
-        isDragging && "opacity-50 z-50 shadow-2xl",
-      )}
+      className={cn("widget-card", isDragging && "opacity-50 z-50 shadow-2xl")}
     >
       <div className="widget-header" {...attributes} {...listeners}>
         <h3 className="widget-title cursor-grab active:cursor-grabbing">{title}</h3>

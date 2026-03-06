@@ -15,7 +15,6 @@ export function Header({ connectionStatus }: HeaderProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Global keyboard shortcut: "/" to open search
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "/" && !e.ctrlKey && !e.metaKey) {
@@ -59,7 +58,6 @@ export function Header({ connectionStatus }: HeaderProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Search button */}
           <button
             onClick={() => setSearchOpen(true)}
             className="flex items-center gap-2 px-3 py-1.5 text-xs text-muted border border-border rounded-lg hover:border-accent/50 hover:text-white transition-colors"
@@ -83,7 +81,6 @@ export function Header({ connectionStatus }: HeaderProps) {
             </kbd>
           </button>
 
-          {/* Connection status */}
           <div className="flex items-center gap-2 text-xs text-muted">
             <div
               className={cn(

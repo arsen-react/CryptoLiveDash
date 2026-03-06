@@ -1,6 +1,8 @@
 export const BINANCE_REST_URL = import.meta.env.VITE_BINANCE_REST_URL || "https://api.binance.com";
-export const BINANCE_WS_URL = import.meta.env.VITE_BINANCE_WS_URL || "wss://stream.binance.com:9443/ws";
-export const BINANCE_STREAM_URL = import.meta.env.VITE_BINANCE_STREAM_URL || "wss://stream.binance.com:9443/stream";
+export const BINANCE_WS_URL =
+  import.meta.env.VITE_BINANCE_WS_URL || "wss://stream.binance.com:9443/ws";
+export const BINANCE_STREAM_URL =
+  import.meta.env.VITE_BINANCE_STREAM_URL || "wss://stream.binance.com:9443/stream";
 
 export const DEFAULT_SYMBOL = "BTCUSDT";
 

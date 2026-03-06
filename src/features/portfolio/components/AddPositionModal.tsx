@@ -1,10 +1,10 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { CoinSearch } from "@/shared/components/CoinSearch";
+import { Modal } from "@/shared/components/Modal";
+import { formatPrice } from "@/shared/utils/formatters";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Modal } from "@/shared/components/Modal";
-import { CoinSearch } from "@/shared/components/CoinSearch";
-import { useAppDispatch, useAppSelector } from "@/app/store";
 import { addPosition } from "../portfolioSlice";
-import { formatPrice } from "@/shared/utils/formatters";
 
 interface FormData {
   amount: number;
@@ -19,8 +19,8 @@ interface AddPositionModalProps {
 export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
   const dispatch = useAppDispatch();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
-  const liveTicker = useAppSelector(
-    (state) => selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
+  const liveTicker = useAppSelector((state) =>
+    selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
   );
 
   const {
@@ -61,9 +61,7 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="flex items-center justify-between p-3 bg-surface rounded-lg">
             <div>
-              <span className="text-sm font-semibold">
-                {selectedSymbol.replace("USDT", "")}
-              </span>
+              <span className="text-sm font-semibold">{selectedSymbol.replace("USDT", "")}</span>
               <span className="text-xs text-muted ml-1">/USDT</span>
             </div>
             <button
@@ -77,7 +75,10 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
 
           {liveTicker && (
             <p className="text-xs text-muted">
-              Current price: <span className="text-white font-mono">${formatPrice(parseFloat(liveTicker.price))}</span>
+              Current price:{" "}
+              <span className="text-white font-mono">
+                ${formatPrice(parseFloat(liveTicker.price))}
+              </span>
             </p>
           )}
 
@@ -90,9 +91,7 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
               placeholder="0.00"
               className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors font-mono"
             />
-            {errors.amount && (
-              <p className="text-xs text-loss mt-1">Enter a valid amount</p>
-            )}
+            {errors.amount && <p className="text-xs text-loss mt-1">Enter a valid amount</p>}
           </div>
 
           <div>
@@ -104,9 +103,7 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
               placeholder="0.00"
               className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors font-mono"
             />
-            {errors.buyPrice && (
-              <p className="text-xs text-loss mt-1">Enter a valid price</p>
-            )}
+            {errors.buyPrice && <p className="text-xs text-loss mt-1">Enter a valid price</p>}
           </div>
 
           <div className="flex gap-2 pt-2">

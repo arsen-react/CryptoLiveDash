@@ -1,9 +1,9 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { PriceChange } from "@/shared/components/PriceChange";
+import { formatCurrency, formatPrice } from "@/shared/utils/formatters";
 import { useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/app/store";
 import { removePosition } from "../portfolioSlice";
 import { AddPositionModal } from "./AddPositionModal";
-import { PriceChange } from "@/shared/components/PriceChange";
-import { formatPrice, formatCurrency } from "@/shared/utils/formatters";
 
 export default function Portfolio() {
   const dispatch = useAppDispatch();
@@ -39,7 +39,6 @@ export default function Portfolio() {
         </button>
       </div>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="widget-card widget-body">
           <p className="text-xs text-muted mb-1">Total Value</p>
@@ -60,7 +59,6 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Positions Table */}
       {positions.length === 0 ? (
         <div className="widget-card widget-body text-center text-muted py-12">
           <p className="text-sm">No positions yet</p>
@@ -98,9 +96,7 @@ export default function Portfolio() {
                     {pos.symbol.replace("USDT", "")}
                     <span className="text-xs text-muted ml-1">/USDT</span>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-sm">
-                    {pos.amount}
-                  </td>
+                  <td className="px-4 py-3 text-right font-mono text-sm">{pos.amount}</td>
                   <td className="px-4 py-3 text-right font-mono text-sm text-muted">
                     ${formatPrice(pos.buyPrice)}
                   </td>

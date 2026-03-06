@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
-import { useGetTickersQuery } from "../marketApi";
-import { useAppSelector, useAppDispatch } from "@/app/store";
-import { setSelectedSymbol } from "../marketSlice";
-import { PriceChange } from "@/shared/components/PriceChange";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { LastUpdated } from "@/shared/components/LastUpdated";
+import { PriceChange } from "@/shared/components/PriceChange";
+import type { Ticker } from "@/shared/types/market";
+import { cn } from "@/shared/utils/cn";
+import { TOP_SYMBOLS } from "@/shared/utils/constants";
 import { formatPrice, formatVolume } from "@/shared/utils/formatters";
 import { generateMockTickers } from "@/shared/utils/mockData";
-import { TOP_SYMBOLS } from "@/shared/utils/constants";
-import { cn } from "@/shared/utils/cn";
-import type { Ticker } from "@/shared/types/market";
+import { useNavigate } from "react-router-dom";
+import { useGetTickersQuery } from "../marketApi";
+import { setSelectedSymbol } from "../marketSlice";
 
 export default function MarketOverview() {
   const navigate = useNavigate();
@@ -36,7 +36,9 @@ export default function MarketOverview() {
           <h2 className="text-xl font-semibold">Market Overview</h2>
           {isLoading && <span className="text-xs text-accent animate-pulse">Loading...</span>}
           {isMock && !isLoading && (
-            <span className="text-xs text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded">Demo data</span>
+            <span className="text-xs text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded">
+              Demo data
+            </span>
           )}
         </div>
         <LastUpdated
@@ -79,9 +81,7 @@ export default function MarketOverview() {
                 >
                   <td className="px-4 py-3 text-sm text-muted">{index + 1}</td>
                   <td className="px-4 py-3">
-                    <span className="text-sm font-medium">
-                      {ticker.symbol.replace("USDT", "")}
-                    </span>
+                    <span className="text-sm font-medium">{ticker.symbol.replace("USDT", "")}</span>
                     <span className="text-xs text-muted ml-1">/USDT</span>
                   </td>
                   <td className="px-4 py-3 text-right font-mono text-sm">

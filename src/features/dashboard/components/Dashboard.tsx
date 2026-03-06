@@ -1,17 +1,20 @@
-import { lazy, Suspense } from "react";
 import { useAppSelector } from "@/app/store";
-import { LoadingSkeleton } from "@/shared/components/LoadingSkeleton";
-import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import { OrderBook } from "@/features/market/components/OrderBook";
+import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
+import { LoadingSkeleton } from "@/shared/components/LoadingSkeleton";
+import { PriceChange } from "@/shared/components/PriceChange";
+import { formatCurrency, formatPrice } from "@/shared/utils/formatters";
+import { lazy, Suspense } from "react";
+import { MiniMarket } from "./MiniMarket";
 import { MiniPortfolio } from "./MiniPortfolio";
 import { MiniWatchlist } from "./MiniWatchlist";
-import { MiniMarket } from "./MiniMarket";
-import { PriceChange } from "@/shared/components/PriceChange";
-import { formatPrice, formatCurrency } from "@/shared/utils/formatters";
 
 const TradingChart = lazy(() => import("@/features/chart/components/TradingChart"));
 
-const MOCK_STATS: Record<string, { price: number; change: number; high: number; low: number; vol: number }> = {
+const MOCK_STATS: Record<
+  string,
+  { price: number; change: number; high: number; low: number; vol: number }
+> = {
   BTCUSDT: { price: 87432.5, change: 2.34, high: 88100, low: 85900, vol: 2_340_000_000 },
   ETHUSDT: { price: 3245.8, change: 1.87, high: 3310, low: 3180, vol: 890_000_000 },
   BNBUSDT: { price: 612.4, change: -0.54, high: 625, low: 605, vol: 320_000_000 },
@@ -23,21 +26,18 @@ export default function Dashboard() {
   const liveTicker = useAppSelector((state) => state.market.liveTickers[selectedSymbol]);
 
   const fallback = MOCK_STATS[selectedSymbol];
-  const price = liveTicker ? parseFloat(liveTicker.price) : fallback?.price ?? 0;
-  const change = liveTicker ? parseFloat(liveTicker.priceChangePercent) : fallback?.change ?? 0;
-  const high = liveTicker ? parseFloat(liveTicker.highPrice) : fallback?.high ?? 0;
-  const low = liveTicker ? parseFloat(liveTicker.lowPrice) : fallback?.low ?? 0;
-  const vol = liveTicker ? parseFloat(liveTicker.quoteVolume) : fallback?.vol ?? 0;
+  const price = liveTicker ? parseFloat(liveTicker.price) : (fallback?.price ?? 0);
+  const change = liveTicker ? parseFloat(liveTicker.priceChangePercent) : (fallback?.change ?? 0);
+  const high = liveTicker ? parseFloat(liveTicker.highPrice) : (fallback?.high ?? 0);
+  const low = liveTicker ? parseFloat(liveTicker.lowPrice) : (fallback?.low ?? 0);
+  const vol = liveTicker ? parseFloat(liveTicker.quoteVolume) : (fallback?.vol ?? 0);
   const hasData = liveTicker || fallback;
 
   return (
     <div className="space-y-4">
-      {/* Top stats bar */}
       <div className="flex items-center gap-6 flex-wrap">
         <div>
-          <span className="text-lg font-semibold">
-            {selectedSymbol.replace("USDT", "")}
-          </span>
+          <span className="text-lg font-semibold">{selectedSymbol.replace("USDT", "")}</span>
           <span className="text-sm text-muted ml-1">/USDT</span>
         </div>
         {hasData && (
@@ -70,18 +70,14 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Main grid: Chart (left) + Right sidebar */}
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
-        {/* Left column: Chart + Market */}
         <div className="space-y-4 min-w-0">
-          {/* Trading Chart - always renders, uses mock if needed */}
           <ErrorBoundary>
             <Suspense fallback={<LoadingSkeleton lines={12} />}>
               <TradingChart />
             </Suspense>
           </ErrorBoundary>
 
-          {/* Market Overview (compact table) */}
           <div className="widget-card">
             <div className="widget-header">
               <h3 className="widget-title">Top Markets</h3>
@@ -94,9 +90,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right sidebar: Order Book + Watchlist + Portfolio */}
         <div className="space-y-4">
-          {/* Order Book */}
           <div className="widget-card">
             <div className="widget-header">
               <h3 className="widget-title">Order Book</h3>
@@ -111,7 +105,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Watchlist */}
           <div className="widget-card">
             <div className="widget-header">
               <h3 className="widget-title">Watchlist</h3>
@@ -123,7 +116,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Portfolio */}
           <div className="widget-card">
             <div className="widget-header">
               <h3 className="widget-title">Portfolio</h3>

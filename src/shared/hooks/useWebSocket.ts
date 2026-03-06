@@ -1,8 +1,5 @@
-import { useEffect, useRef, useCallback, useState } from "react";
-import {
-  WS_RECONNECT_DELAY,
-  WS_MAX_RECONNECT_ATTEMPTS,
-} from "@/shared/utils/constants";
+import { WS_MAX_RECONNECT_ATTEMPTS, WS_RECONNECT_DELAY } from "@/shared/utils/constants";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseWebSocketOptions<T> {
   url: string;
@@ -55,10 +52,7 @@ export function useWebSocket<T>({
       setStatus("closed");
       wsRef.current = null;
 
-      if (
-        enabled &&
-        reconnectCountRef.current < WS_MAX_RECONNECT_ATTEMPTS
-      ) {
+      if (enabled && reconnectCountRef.current < WS_MAX_RECONNECT_ATTEMPTS) {
         reconnectCountRef.current += 1;
         setTimeout(connect, WS_RECONNECT_DELAY);
       }

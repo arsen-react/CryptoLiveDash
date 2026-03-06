@@ -1,16 +1,51 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { z } from "zod";
 import type { WidgetConfig, WidgetType } from "@/shared/types/common";
 import { loadFromStorage, saveToStorage } from "@/shared/utils/storage";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { z } from "zod";
 
 const STORAGE_KEY = "cld-dashboard";
 
 const DEFAULT_WIDGETS: WidgetConfig[] = [
-  { id: "w-chart", type: "chart", title: "Trading Chart", position: { x: 0, y: 0 }, size: { w: 8, h: 4 }, visible: true },
-  { id: "w-orderbook", type: "order-book", title: "Order Book", position: { x: 8, y: 0 }, size: { w: 4, h: 4 }, visible: true },
-  { id: "w-market", type: "market-overview", title: "Market Overview", position: { x: 0, y: 4 }, size: { w: 6, h: 3 }, visible: true },
-  { id: "w-watchlist", type: "watchlist", title: "Watchlist", position: { x: 6, y: 4 }, size: { w: 3, h: 3 }, visible: true },
-  { id: "w-portfolio", type: "portfolio", title: "Portfolio", position: { x: 9, y: 4 }, size: { w: 3, h: 3 }, visible: true },
+  {
+    id: "w-chart",
+    type: "chart",
+    title: "Trading Chart",
+    position: { x: 0, y: 0 },
+    size: { w: 8, h: 4 },
+    visible: true,
+  },
+  {
+    id: "w-orderbook",
+    type: "order-book",
+    title: "Order Book",
+    position: { x: 8, y: 0 },
+    size: { w: 4, h: 4 },
+    visible: true,
+  },
+  {
+    id: "w-market",
+    type: "market-overview",
+    title: "Market Overview",
+    position: { x: 0, y: 4 },
+    size: { w: 6, h: 3 },
+    visible: true,
+  },
+  {
+    id: "w-watchlist",
+    type: "watchlist",
+    title: "Watchlist",
+    position: { x: 6, y: 4 },
+    size: { w: 3, h: 3 },
+    visible: true,
+  },
+  {
+    id: "w-portfolio",
+    type: "portfolio",
+    title: "Portfolio",
+    position: { x: 9, y: 4 },
+    size: { w: 3, h: 3 },
+    visible: true,
+  },
 ];
 
 const widgetSchema = z.array(

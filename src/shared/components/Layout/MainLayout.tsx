@@ -1,13 +1,13 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
+import { PriceTicker } from "@/features/market/components/PriceTicker";
+import { setWsStatus, updateTickers } from "@/features/market/marketSlice";
+import { useWebSocket } from "@/shared/hooks/useWebSocket";
+import type { Ticker, WebSocketTickerMessage } from "@/shared/types/market";
+import { BINANCE_WS_URL } from "@/shared/utils/constants";
 import { useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
-import { PriceTicker } from "@/features/market/components/PriceTicker";
-import { useWebSocket } from "@/shared/hooks/useWebSocket";
-import { useAppDispatch, useAppSelector } from "@/app/store";
-import { updateTickers, setWsStatus } from "@/features/market/marketSlice";
-import { BINANCE_WS_URL } from "@/shared/utils/constants";
-import type { Ticker, WebSocketTickerMessage } from "@/shared/types/market";
 
 export function MainLayout() {
   const dispatch = useAppDispatch();
@@ -41,7 +41,6 @@ export function MainLayout() {
     onMessage: handleMessage,
   });
 
-  // Sync WS status to Redux for Header
   if (status !== connectionStatus) {
     dispatch(setWsStatus(status));
   }

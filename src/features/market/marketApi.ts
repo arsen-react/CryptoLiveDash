@@ -1,6 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { Kline, OrderBook, Ticker, Timeframe } from "@/shared/types/market";
 import { BINANCE_REST_URL } from "@/shared/utils/constants";
-import type { Ticker, Kline, OrderBook, Timeframe } from "@/shared/types/market";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 interface BinanceTickerResponse {
   symbol: string;
@@ -14,8 +14,18 @@ interface BinanceTickerResponse {
 }
 
 type BinanceKlineResponse = [
-  number, string, string, string, string, string,
-  number, string, string, string, string, string,
+  number,
+  string,
+  string,
+  string,
+  string,
+  string,
+  number,
+  string,
+  string,
+  string,
+  string,
+  string,
 ];
 
 export const marketApi = createApi({
@@ -55,8 +65,7 @@ export const marketApi = createApi({
     }),
 
     getOrderBook: builder.query<OrderBook, { symbol: string; limit?: number }>({
-      query: ({ symbol, limit = 20 }) =>
-        `/api/v3/depth?symbol=${symbol}&limit=${limit}`,
+      query: ({ symbol, limit = 20 }) => `/api/v3/depth?symbol=${symbol}&limit=${limit}`,
       transformResponse: (response: {
         lastUpdateId: number;
         bids: [string, string][];

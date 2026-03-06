@@ -1,13 +1,13 @@
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { useGetTickersQuery } from "@/features/market/marketApi";
-import { useAppSelector, useAppDispatch } from "@/app/store";
 import { setSelectedSymbol } from "@/features/market/marketSlice";
-import { PriceChange } from "@/shared/components/PriceChange";
 import { LastUpdated } from "@/shared/components/LastUpdated";
+import { PriceChange } from "@/shared/components/PriceChange";
+import type { Ticker } from "@/shared/types/market";
+import { cn } from "@/shared/utils/cn";
+import { TOP_SYMBOLS } from "@/shared/utils/constants";
 import { formatPrice, formatVolume } from "@/shared/utils/formatters";
 import { generateMockTickers } from "@/shared/utils/mockData";
-import { TOP_SYMBOLS } from "@/shared/utils/constants";
-import { cn } from "@/shared/utils/cn";
-import type { Ticker } from "@/shared/types/market";
 
 export function MiniMarket() {
   const dispatch = useAppDispatch();
@@ -26,7 +26,6 @@ export function MiniMarket() {
 
   return (
     <div className="text-xs">
-      {/* Status */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           {isLoading && <span className="text-[10px] text-accent animate-pulse">Loading...</span>}
@@ -41,7 +40,6 @@ export function MiniMarket() {
         />
       </div>
 
-      {/* Header */}
       <div className="grid grid-cols-[1fr_auto_auto_auto] gap-x-3 text-muted px-1 pb-2 border-b border-border mb-1">
         <span>Pair</span>
         <span className="text-right">Price</span>
@@ -49,7 +47,6 @@ export function MiniMarket() {
         <span className="text-right hidden sm:block">Vol</span>
       </div>
 
-      {/* Rows */}
       <div className="space-y-0.5">
         {top10.map((ticker) => {
           const live = liveTickers[ticker.symbol];
@@ -73,7 +70,9 @@ export function MiniMarket() {
               </span>
               <span className="font-mono text-right">${formatPrice(parseFloat(price))}</span>
               <PriceChange value={change} className="!text-xs text-right" />
-              <span className="font-mono text-muted text-right hidden sm:block">${formatVolume(vol)}</span>
+              <span className="font-mono text-muted text-right hidden sm:block">
+                ${formatVolume(vol)}
+              </span>
             </button>
           );
         })}

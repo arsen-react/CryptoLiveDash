@@ -1,21 +1,21 @@
-import { useEffect, useRef, useCallback, useState } from "react";
-import {
-  createChart,
-  type IChartApi,
-  type ISeriesApi,
-  type CandlestickSeriesOptions,
-  type HistogramSeriesOptions,
-  type UTCTimestamp,
-  ColorType,
-} from "lightweight-charts";
-import { useGetKlinesQuery } from "@/features/market/marketApi";
 import { useAppSelector } from "@/app/store";
-import { useWebSocket } from "@/shared/hooks/useWebSocket";
-import { TimeframeSelector } from "./TimeframeSelector";
+import { useGetKlinesQuery } from "@/features/market/marketApi";
 import { LastUpdated } from "@/shared/components/LastUpdated";
+import { useWebSocket } from "@/shared/hooks/useWebSocket";
+import type { Kline, WebSocketKlineMessage } from "@/shared/types/market";
 import { BINANCE_WS_URL } from "@/shared/utils/constants";
 import { generateMockKlines } from "@/shared/utils/mockData";
-import type { Kline, WebSocketKlineMessage } from "@/shared/types/market";
+import {
+  ColorType,
+  createChart,
+  type CandlestickSeriesOptions,
+  type HistogramSeriesOptions,
+  type IChartApi,
+  type ISeriesApi,
+  type UTCTimestamp,
+} from "lightweight-charts";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { TimeframeSelector } from "./TimeframeSelector";
 
 export default function TradingChart() {
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -31,11 +31,9 @@ export default function TradingChart() {
 
   const { data: klines, isLoading, error } = useGetKlinesQuery({ symbol, interval: timeframe });
 
-  // Decide which data to display: real or mock
   const chartData: Kline[] = klines ?? generateMockKlines(symbol);
   const isMock = !klines;
 
-  // Live kline WebSocket
   const handleKlineMessage = useCallback((data: WebSocketKlineMessage) => {
     if (!candleSeriesRef.current || !volumeSeriesRef.current) return;
     const k = data.k;
@@ -63,7 +61,6 @@ export default function TradingChart() {
     onMessage: handleKlineMessage,
   });
 
-  // Create chart on mount
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
@@ -137,7 +134,6 @@ export default function TradingChart() {
     };
   }, []);
 
-  // Feed data into chart whenever chartData changes
   useEffect(() => {
     if (!candleSeriesRef.current || !volumeSeriesRef.current || chartData.length === 0) return;
 
@@ -171,7 +167,6 @@ export default function TradingChart() {
 
   return (
     <div>
-      {/* Chart header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <h2 className="text-sm font-semibold text-muted">Chart</h2>
@@ -180,9 +175,7 @@ export default function TradingChart() {
             isMock={usingMock}
             isLive={!usingMock && lastUpdated !== null}
           />
-          {isLoading && (
-            <span className="text-[10px] text-accent animate-pulse">Loading...</span>
-          )}
+          {isLoading && <span className="text-[10px] text-accent animate-pulse">Loading...</span>}
           {error && !klines && (
             <span className="text-[10px] text-yellow-500/70">Using demo data</span>
           )}
@@ -190,7 +183,6 @@ export default function TradingChart() {
         <TimeframeSelector />
       </div>
 
-      {/* Chart always renders */}
       <div className="widget-card overflow-hidden relative">
         <div ref={chartContainerRef} />
         {isMock && !isLoading && (

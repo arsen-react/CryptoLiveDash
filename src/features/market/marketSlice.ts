@@ -1,6 +1,6 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Ticker } from "@/shared/types/market";
 import { DEFAULT_SYMBOL } from "@/shared/utils/constants";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface MarketState {
   selectedSymbol: string;
@@ -35,6 +35,5 @@ const marketSlice = createSlice({
   },
 });
 
-export const { setSelectedSymbol, updateTicker, updateTickers, setWsStatus } =
-  marketSlice.actions;
+export const { setSelectedSymbol, updateTicker, updateTickers, setWsStatus } = marketSlice.actions;
 export const marketReducer = marketSlice.reducer;
