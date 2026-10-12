@@ -5,6 +5,7 @@ import { marketReducer } from "@/features/market/marketSlice";
 import { chartReducer } from "@/features/chart/chartSlice";
 import { portfolioReducer } from "@/features/portfolio/portfolioSlice";
 import { watchlistReducer } from "@/features/watchlist/watchlistSlice";
+import { alertsListener } from "@/features/alerts/alertsListener";
 import { alertsReducer } from "@/features/alerts/alertsSlice";
 import { dashboardReducer } from "@/features/dashboard/dashboardSlice";
 
@@ -24,7 +25,8 @@ export type RootState = ReturnType<typeof rootReducer>;
 export function makeStore(preloadedState?: Partial<RootState>) {
   return configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(marketApi.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().prepend(alertsListener.middleware).concat(marketApi.middleware),
     preloadedState,
   });
 }

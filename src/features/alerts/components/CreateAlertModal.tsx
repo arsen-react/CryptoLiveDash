@@ -36,8 +36,8 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
     if (!selectedSymbol) return;
     dispatch(addAlert({ symbol: selectedSymbol, targetPrice: data.targetPrice, condition }));
 
-    if (Notification.permission === "default") {
-      Notification.requestPermission();
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+      void Notification.requestPermission();
     }
 
     reset();
@@ -85,6 +85,7 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
               <button
                 type="button"
                 onClick={() => setCondition("above")}
+                aria-pressed={condition === "above"}
                 className={cn(
                   "px-3 py-2 text-sm rounded-lg border transition-colors",
                   condition === "above"
@@ -97,6 +98,7 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
               <button
                 type="button"
                 onClick={() => setCondition("below")}
+                aria-pressed={condition === "below"}
                 className={cn(
                   "px-3 py-2 text-sm rounded-lg border transition-colors",
                   condition === "below"

@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { cn } from "@/shared/utils/cn";
 import { formatPrice, formatTimestamp } from "@/shared/utils/formatters";
-import { useEffect, useState } from "react";
-import { removeAlert, toggleAlert, triggerAlert } from "../alertsSlice";
+import { useState } from "react";
+import { removeAlert, toggleAlert } from "../alertsSlice";
 import { CreateAlertModal } from "./CreateAlertModal";
 
 export default function AlertsList() {
@@ -11,32 +11,9 @@ export default function AlertsList() {
   const alerts = useAppSelector((state) => state.alerts.alerts);
   const liveTickers = useAppSelector((state) => state.market.liveTickers);
 
-  useEffect(() => {
-    for (const alert of alerts) {
-      if (!alert.active) continue;
-      const ticker = liveTickers[alert.symbol];
-      if (!ticker) continue;
-
-      const price = parseFloat(ticker.price);
-      const triggered =
-        (alert.condition === "above" && price >= alert.targetPrice) ||
-        (alert.condition === "below" && price <= alert.targetPrice);
-
-      if (triggered) {
-        dispatch(triggerAlert(alert.id));
-
-        if (Notification.permission === "granted") {
-          new Notification(`Price Alert: ${alert.symbol.replace("USDT", "")}`, {
-            body: `${alert.symbol.replace("USDT", "")} is now ${alert.condition === "above" ? "above" : "below"} $${formatPrice(alert.targetPrice)} (Current: $${formatPrice(price)})`,
-            icon: "/favicon.svg",
-          });
-        }
-      }
-    }
-  }, [liveTickers, alerts, dispatch]);
-
   const activeAlerts = alerts.filter((a) => a.active);
-  const triggeredAlerts = alerts.filter((a) => !a.active);
+  const pausedAlerts = alerts.filter((a) => !a.active && !a.triggeredAt);
+  const triggeredAlerts = alerts.filter((a) => !a.active && a.triggeredAt);
 
   return (
     <div>
@@ -117,6 +94,42 @@ export default function AlertsList() {
             );
           })}
         </div>
+      )}
+
+      {pausedAlerts.length > 0 && (
+        <>
+          <h3 className="text-sm font-medium text-muted mb-2">Paused ({pausedAlerts.length})</h3>
+          <div className="space-y-2 mb-6">
+            {pausedAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className="widget-card widget-body flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4 opacity-60">
+                  <span className="text-sm">{alert.symbol.replace("USDT", "")}</span>
+                  <span className="text-xs text-muted">
+                    {alert.condition === "above" ? "Above" : "Below"} $
+                    {formatPrice(alert.targetPrice)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => dispatch(toggleAlert(alert.id))}
+                    className="text-xs text-muted hover:text-white transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                  >
+                    Resume
+                  </button>
+                  <button
+                    onClick={() => dispatch(removeAlert(alert.id))}
+                    className="text-xs text-muted hover:text-loss transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {triggeredAlerts.length > 0 && (
