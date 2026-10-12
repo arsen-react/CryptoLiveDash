@@ -51,6 +51,19 @@ export interface WebSocketTickerMessage {
   q: string; // Quote volume
 }
 
+// Binance's all-market "!miniTicker@arr" stream. It has no change fields, so the
+// change is derived from the open and close prices.
+export interface WebSocketMiniTickerMessage {
+  e: "24hrMiniTicker";
+  s: string; // Symbol
+  c: string; // Close (last) price
+  o: string; // Open price 24h ago
+  h: string; // High price
+  l: string; // Low price
+  v: string; // Base asset volume
+  q: string; // Quote asset volume
+}
+
 export interface WebSocketKlineMessage {
   e: "kline";
   s: string;

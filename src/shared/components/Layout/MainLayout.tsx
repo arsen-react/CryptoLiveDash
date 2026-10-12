@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { PriceTicker } from "@/features/market/components/PriceTicker";
 import { setWsStatus, updateTickers } from "@/features/market/marketSlice";
+import { miniTickerToTicker } from "@/features/market/miniTicker";
 import { useWebSocket } from "@/shared/hooks/useWebSocket";
-import type { Ticker, WebSocketTickerMessage } from "@/shared/types/market";
+import type { WebSocketMiniTickerMessage } from "@/shared/types/market";
 import { BINANCE_WS_URL } from "@/shared/utils/constants";
 import { useCallback } from "react";
 import { Outlet } from "react-router-dom";
@@ -14,20 +15,9 @@ export function MainLayout() {
   const connectionStatus = useAppSelector((state) => state.market.wsStatus);
 
   const handleMessage = useCallback(
-    (data: WebSocketTickerMessage | WebSocketTickerMessage[]) => {
+    (data: WebSocketMiniTickerMessage | WebSocketMiniTickerMessage[]) => {
       const messages = Array.isArray(data) ? data : [data];
-      const tickers: Ticker[] = messages
-        .filter((m) => m.s?.endsWith("USDT"))
-        .map((m) => ({
-          symbol: m.s,
-          price: m.c,
-          priceChange: m.p,
-          priceChangePercent: m.P,
-          highPrice: m.h,
-          lowPrice: m.l,
-          volume: m.v,
-          quoteVolume: m.q,
-        }));
+      const tickers = messages.filter((m) => m.s?.endsWith("USDT")).map(miniTickerToTicker);
 
       if (tickers.length > 0) {
         dispatch(updateTickers(tickers));
@@ -36,8 +26,10 @@ export function MainLayout() {
     [dispatch],
   );
 
-  const { status } = useWebSocket<WebSocketTickerMessage[]>({
-    url: `${BINANCE_WS_URL}/!ticker@arr`,
+  // Binance retired the full "!ticker@arr" stream; the mini-ticker stream still
+  // updates every second for every pair that traded.
+  const { status } = useWebSocket<WebSocketMiniTickerMessage[]>({
+    url: `${BINANCE_WS_URL}/!miniTicker@arr`,
     onMessage: handleMessage,
   });
 
