@@ -1,5 +1,5 @@
 import { WS_MAX_RECONNECT_ATTEMPTS, WS_RECONNECT_DELAY } from "@/shared/utils/constants";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface UseWebSocketOptions<T> {
   url: string;
@@ -17,60 +17,70 @@ export function useWebSocket<T>({
   onMessage,
   enabled = true,
 }: UseWebSocketOptions<T>): UseWebSocketReturn {
-  const wsRef = useRef<WebSocket | null>(null);
   const reconnectCountRef = useRef(0);
   const onMessageRef = useRef(onMessage);
   const [status, setStatus] = useState<UseWebSocketReturn["status"]>("closed");
 
   onMessageRef.current = onMessage;
 
-  const connect = useCallback(() => {
+  useEffect(() => {
     if (!enabled) return;
 
-    setStatus("connecting");
-    const ws = new WebSocket(url);
+    // Set by the cleanup below. Events from a socket this effect has closed are
+    // ignored, so a stream left behind by a URL change can neither reconnect nor
+    // feed stale data into onMessage.
+    let disposed = false;
+    let ws: WebSocket | null = null;
+    let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 
-    ws.onopen = () => {
-      setStatus("open");
-      reconnectCountRef.current = 0;
+    const connect = () => {
+      setStatus("connecting");
+      const socket = new WebSocket(url);
+      ws = socket;
+
+      socket.onopen = () => {
+        if (disposed) return;
+        setStatus("open");
+        reconnectCountRef.current = 0;
+      };
+
+      socket.onmessage = (event: MessageEvent) => {
+        if (disposed) return;
+        try {
+          const data = JSON.parse(event.data as string) as T;
+          onMessageRef.current(data);
+        } catch {
+          // skip malformed messages
+        }
+      };
+
+      socket.onerror = () => {
+        if (disposed) return;
+        setStatus("error");
+      };
+
+      socket.onclose = () => {
+        if (disposed) return;
+        setStatus("closed");
+        ws = null;
+
+        if (reconnectCountRef.current < WS_MAX_RECONNECT_ATTEMPTS) {
+          reconnectCountRef.current += 1;
+          reconnectTimer = setTimeout(connect, WS_RECONNECT_DELAY);
+        }
+      };
     };
 
-    ws.onmessage = (event: MessageEvent) => {
-      try {
-        const data = JSON.parse(event.data as string) as T;
-        onMessageRef.current(data);
-      } catch {
-        // skip malformed messages
-      }
-    };
-
-    ws.onerror = () => {
-      setStatus("error");
-    };
-
-    ws.onclose = () => {
-      setStatus("closed");
-      wsRef.current = null;
-
-      if (enabled && reconnectCountRef.current < WS_MAX_RECONNECT_ATTEMPTS) {
-        reconnectCountRef.current += 1;
-        setTimeout(connect, WS_RECONNECT_DELAY);
-      }
-    };
-
-    wsRef.current = ws;
-  }, [url, enabled]);
-
-  useEffect(() => {
     connect();
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-      }
+      disposed = true;
+      clearTimeout(reconnectTimer);
+      ws?.close();
+      ws = null;
+      reconnectCountRef.current = 0;
     };
-  }, [connect]);
+  }, [url, enabled]);
 
   return { status, reconnectCount: reconnectCountRef.current };
 }
