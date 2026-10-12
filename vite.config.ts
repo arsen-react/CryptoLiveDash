@@ -39,6 +39,8 @@ export default defineConfig({
         "src/vite-env.d.ts",
         "src/shared/types/**",
       ],
+      reporter: ["text", "html"],
+      thresholds: { statements: 95, branches: 88, functions: 88, lines: 95 },
     },
   },
 });

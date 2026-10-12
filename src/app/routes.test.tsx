@@ -9,6 +9,7 @@ import {
 } from "@/features/market/marketApi";
 import { useWebSocket } from "@/shared/hooks/useWebSocket";
 import { queryResult } from "@/test/fixtures";
+import { App } from "./App";
 import { routes } from "./routes";
 import { makeStore } from "./store";
 
@@ -62,5 +63,10 @@ describe("routes", () => {
 
     expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument();
     expect(screen.getByRole("banner")).toHaveTextContent("CryptoLiveDash");
+  });
+
+  it("boots the whole app on the dashboard", async () => {
+    render(<App />);
+    expect(await screen.findByRole("heading", { name: "Trading Chart" })).toBeInTheDocument();
   });
 });
