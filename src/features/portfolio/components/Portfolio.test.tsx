@@ -93,4 +93,21 @@ describe("Portfolio", () => {
     expect(dialog.getByText("Enter a valid price")).toBeInTheDocument();
     expect(store.getState().portfolio.positions).toEqual([]);
   });
+
+  it.each([
+    ["SOLUSDT", 151.37, /^SOL/, "$151.37"],
+    ["PEPEUSDT", 0.0000123, /^PEPE/, "$0.00001230"],
+  ])("pre-fills the buy price with the live price of %s", async (symbol, price, option, shown) => {
+    vi.mocked(useGetTickersQuery).mockReturnValue(queryResult([ticker(symbol, price)]));
+    const { user } = renderWithProviders(<Portfolio />, {
+      actions: [updateTickers([ticker(symbol, price)])],
+    });
+
+    await user.click(screen.getAllByRole("button", { name: "+ Add Position" })[0] as HTMLElement);
+    const dialog = within(screen.getByRole("dialog", { name: "Add Position" }));
+    await user.click(dialog.getByRole("button", { name: option }));
+
+    expect(dialog.getByLabelText("Buy Price (USD)")).toHaveValue(price);
+    expect(dialog.getByText(shown)).toBeInTheDocument();
+  });
 });

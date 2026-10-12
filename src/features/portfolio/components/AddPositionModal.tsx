@@ -21,9 +21,8 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
   const amountId = useId();
   const buyPriceId = useId();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
-  const liveTicker = useAppSelector((state) =>
-    selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
-  );
+  const liveTickers = useAppSelector((state) => state.market.liveTickers);
+  const liveTicker = selectedSymbol ? liveTickers[selectedSymbol] : undefined;
 
   const {
     register,
@@ -35,9 +34,9 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
 
   function handleSelectCoin(symbol: string) {
     setSelectedSymbol(symbol);
-    const ticker = liveTicker;
+    const ticker = liveTickers[symbol];
     if (ticker) {
-      setValue("buyPrice", parseFloat(parseFloat(ticker.price).toFixed(2)));
+      setValue("buyPrice", parseFloat(ticker.price));
     }
   }
 
