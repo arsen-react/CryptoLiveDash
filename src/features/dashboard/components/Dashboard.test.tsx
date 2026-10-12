@@ -6,7 +6,7 @@ import {
   useGetOrderBookQuery,
   useGetTickersQuery,
 } from "@/features/market/marketApi";
-import { updateTickers } from "@/features/market/marketSlice";
+import { setSelectedSymbol, updateTickers } from "@/features/market/marketSlice";
 import { useWebSocket } from "@/shared/hooks/useWebSocket";
 import { queryResult, ticker } from "@/test/fixtures";
 import { renderWithProviders } from "@/test/render";
@@ -176,5 +176,10 @@ describe("Dashboard", () => {
     });
 
     expect(headlinePrice("$91,000.00")).toBeInTheDocument();
+  });
+
+  it("waits for market data on a pair without demo stats", () => {
+    renderWithProviders(<Dashboard />, { actions: [setSelectedSymbol("NEARUSDT")] });
+    expect(screen.getByText("Waiting for market data...")).toBeInTheDocument();
   });
 });

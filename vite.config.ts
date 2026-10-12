@@ -1,12 +1,14 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
-import path from "path";
+import { fileURLToPath } from "node:url";
+
+const nodeModule = (names: string) => new RegExp(`[\\\\/]node_modules[\\\\/](${names})[\\\\/]`);
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
   server: {
@@ -14,12 +16,20 @@ export default defineConfig({
     open: true,
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "react-router-dom"],
-          redux: ["@reduxjs/toolkit", "react-redux"],
-          charts: ["lightweight-charts"],
+        codeSplitting: {
+          groups: [
+            {
+              name: "vendor",
+              test: nodeModule("react|react-dom|react-router|react-router-dom|scheduler"),
+            },
+            {
+              name: "redux",
+              test: nodeModule("@reduxjs|react-redux|redux|immer|reselect|redux-thunk"),
+            },
+            { name: "charts", test: nodeModule("lightweight-charts|fancy-canvas") },
+          ],
         },
       },
     },
@@ -28,7 +38,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
-    clearMocks: true,
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],

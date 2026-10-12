@@ -56,6 +56,18 @@ describe("MainLayout", () => {
     expect(screen.getAllByText("$61,000.00")).toHaveLength(2);
   });
 
+  it("accepts single messages and skips updates with no USDT pair", () => {
+    const { store } = renderLayout();
+    const onStoreChange = vi.fn();
+    store.subscribe(onStoreChange);
+
+    act(() => lastSocket().onMessage([miniTicker("ETHBTC", 0.05)]));
+    expect(onStoreChange).not.toHaveBeenCalled();
+
+    act(() => lastSocket().onMessage(miniTicker("SOLUSDT", 150)));
+    expect(Object.keys(store.getState().market.liveTickers)).toEqual(["SOLUSDT"]);
+  });
+
   it.each([
     ["open", "Live"],
     ["connecting", "Connecting..."],

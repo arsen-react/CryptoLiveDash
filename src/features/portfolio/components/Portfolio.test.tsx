@@ -52,6 +52,19 @@ describe("Portfolio", () => {
     expect(totals("Total P&L")).toBe("+$3.00K+8.33%");
   });
 
+  it("shows losses per position and in the total", () => {
+    renderWithProviders(<Portfolio />, {
+      actions: [
+        addPosition({ symbol: "BTCUSDT", amount: 1, buyPrice: 60_000 }),
+        updateTickers([ticker("BTCUSDT", 54_000)]),
+      ],
+    });
+
+    expect(row("BTC").getByText("-$6,000.00")).toBeInTheDocument();
+    expect(row("BTC").getByText("-10.00%")).toBeInTheDocument();
+    expect(totals("Total P&L")).toBe("-$6.00K-10.00%");
+  });
+
   it("removes a position", async () => {
     const { user, store } = renderWithProviders(<Portfolio />, {
       actions: [addPosition({ symbol: "BTCUSDT", amount: 1, buyPrice: 60_000 })],

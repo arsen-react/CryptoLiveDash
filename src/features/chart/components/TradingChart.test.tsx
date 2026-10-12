@@ -131,9 +131,14 @@ describe("TradingChart", () => {
     expect(chart.candles.setData.mock.lastCall?.[0]).toHaveLength(200);
   });
 
-  it("removes the chart when unmounted", () => {
+  it("follows the window size, until it is unmounted and removed", () => {
     const { unmount } = renderWithProviders(<TradingChart />);
+    window.dispatchEvent(new Event("resize"));
+    expect(chart.api.applyOptions).toHaveBeenCalledTimes(1);
+
     unmount();
+    window.dispatchEvent(new Event("resize"));
+    expect(chart.api.applyOptions).toHaveBeenCalledTimes(1);
     expect(chart.api.remove).toHaveBeenCalledTimes(1);
   });
 

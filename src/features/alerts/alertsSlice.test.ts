@@ -37,4 +37,10 @@ describe("alertsSlice", () => {
     expect(alertsReducer(state, removeAlert(id)).alerts).toEqual([]);
     expect(localStorage.getItem("cld-alerts")).toBe("[]");
   });
+
+  it("ignores triggering or toggling an unknown alert", () => {
+    const { state } = withAlert();
+    expect(alertsReducer(state, triggerAlert("missing"))).toBe(state);
+    expect(alertsReducer(state, toggleAlert("missing"))).toBe(state);
+  });
 });

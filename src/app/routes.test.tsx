@@ -39,6 +39,9 @@ vi.mock("lightweight-charts", () => {
   };
 });
 
+// Pages are lazy chunks; the first load in a cold, instrumented run can take over a second.
+const LAZY_PAGE = { timeout: 5000 };
+
 describe("routes", () => {
   beforeEach(() => {
     vi.mocked(useWebSocket).mockReturnValue({ status: "open", reconnectCount: 0 });
@@ -61,12 +64,14 @@ describe("routes", () => {
       </Provider>,
     );
 
-    expect(await screen.findByRole("heading", { name: heading })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: heading }, LAZY_PAGE)).toBeInTheDocument();
     expect(screen.getByRole("banner")).toHaveTextContent("CryptoLiveDash");
   });
 
   it("boots the whole app on the dashboard", async () => {
     render(<App />);
-    expect(await screen.findByRole("heading", { name: "Trading Chart" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Trading Chart" }, LAZY_PAGE),
+    ).toBeInTheDocument();
   });
 });
