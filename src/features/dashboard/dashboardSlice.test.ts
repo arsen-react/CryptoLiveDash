@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   addWidget,
   dashboardReducer,
+  moveWidget,
   removeWidget,
   reorderWidgets,
   resetLayout,
@@ -53,5 +54,41 @@ describe("dashboardSlice", () => {
   it("restores the default layout", () => {
     const changed = dashboardReducer(initial(), removeWidget("w-chart"));
     expect(ids(dashboardReducer(changed, resetLayout()))).toContain("w-chart");
+  });
+
+  it.each([
+    ["forwards", "w-chart", "w-market", ["w-orderbook", "w-market", "w-chart"]],
+    ["backwards", "w-portfolio", "w-orderbook", ["w-chart", "w-portfolio", "w-orderbook"]],
+  ])("moves a widget %s onto another one's place", (_, id, overId, expected) => {
+    const next = dashboardReducer(initial(), moveWidget({ id, overId }));
+
+    expect(ids(next).slice(0, 3)).toEqual(expected);
+    expect(JSON.parse(localStorage.getItem("cld-dashboard") ?? "[]")).toHaveLength(5);
+  });
+
+  it("ignores a move onto an unknown widget", () => {
+    const state = initial();
+    expect(dashboardReducer(state, moveWidget({ id: "w-chart", overId: "nope" }))).toBe(state);
+  });
+
+  it("falls back to the default layout when the stored one has an unknown widget type", async () => {
+    localStorage.setItem(
+      "cld-dashboard",
+      JSON.stringify([
+        {
+          id: "x",
+          type: "casino",
+          title: "?",
+          position: { x: 0, y: 0 },
+          size: { w: 1, h: 1 },
+          visible: true,
+        },
+      ]),
+    );
+    vi.resetModules();
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { dashboardReducer: freshReducer } = await import("./dashboardSlice");
+
+    expect(freshReducer(undefined, { type: "init" }).widgets[0]?.id).toBe("w-chart");
   });
 });

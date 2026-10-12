@@ -167,9 +167,8 @@ export default function TradingChart() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-sm font-semibold text-muted">Chart</h2>
           <LastUpdated
             timestamp={lastUpdated}
             isMock={usingMock}
@@ -183,7 +182,7 @@ export default function TradingChart() {
         <TimeframeSelector />
       </div>
 
-      <div className="widget-card overflow-hidden relative">
+      <div className="relative overflow-hidden rounded-lg">
         <div ref={chartContainerRef} />
         {isMock && !isLoading && (
           <div className="absolute top-3 left-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-medium px-2 py-1 rounded">

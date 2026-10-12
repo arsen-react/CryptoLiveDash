@@ -8,39 +8,82 @@ interface WidgetWrapperProps {
   id: string;
   title: string;
   children: ReactNode;
-  onRemove?: () => void;
+  /** Shown in the header, before the hide button. */
+  extra?: ReactNode;
+  onHide?: () => void;
+  className?: string;
+  bodyClassName?: string;
 }
 
-export function WidgetWrapper({ id, title, children, onRemove }: WidgetWrapperProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
+/** Dashboard card that can be dragged by its handle, with the mouse or the keyboard. */
+export function WidgetWrapper({
+  id,
+  title,
+  children,
+  extra,
+  onHide,
+  className,
+  bodyClassName = "widget-body",
+}: WidgetWrapperProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
     transition,
-  };
+    isDragging,
+  } = useSortable({ id });
 
   return (
-    <div
+    <section
       ref={setNodeRef}
-      style={style}
-      className={cn("widget-card", isDragging && "opacity-50 z-50 shadow-2xl")}
+      aria-label={title}
+      style={{ transform: CSS.Translate.toString(transform), transition }}
+      className={cn(
+        "widget-card min-w-0",
+        isDragging && "relative z-50 opacity-80 shadow-2xl ring-1 ring-accent/40",
+        className,
+      )}
     >
-      <div className="widget-header" {...attributes} {...listeners}>
-        <h3 className="widget-title cursor-grab active:cursor-grabbing">{title}</h3>
-        {onRemove && (
+      <div className="widget-header">
+        <div className="flex items-center gap-2">
           <button
-            onClick={onRemove}
-            className="text-xs text-muted hover:text-loss transition-colors"
+            ref={setActivatorNodeRef}
+            type="button"
+            aria-label={`Move ${title}`}
+            className="-ml-1 p-1 rounded text-muted hover:text-white hover:bg-surface-hover cursor-grab active:cursor-grabbing touch-none"
+            {...attributes}
+            {...listeners}
           >
-            Remove
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+              <circle cx="4" cy="2.5" r="1" />
+              <circle cx="8" cy="2.5" r="1" />
+              <circle cx="4" cy="6" r="1" />
+              <circle cx="8" cy="6" r="1" />
+              <circle cx="4" cy="9.5" r="1" />
+              <circle cx="8" cy="9.5" r="1" />
+            </svg>
           </button>
-        )}
+          <h3 className="widget-title">{title}</h3>
+        </div>
+        <div className="flex items-center gap-3">
+          {extra}
+          {onHide && (
+            <button
+              type="button"
+              onClick={onHide}
+              aria-label={`Hide ${title}`}
+              className="text-xs text-muted hover:text-white transition-colors"
+            >
+              Hide
+            </button>
+          )}
+        </div>
       </div>
-      <div className="widget-body">
+      <div className={bodyClassName}>
         <ErrorBoundary>{children}</ErrorBoundary>
       </div>
-    </div>
+    </section>
   );
 }

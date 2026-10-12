@@ -48,10 +48,19 @@ const DEFAULT_WIDGETS: WidgetConfig[] = [
   },
 ];
 
+const WIDGET_TYPES = [
+  "chart",
+  "market-overview",
+  "portfolio",
+  "watchlist",
+  "alerts",
+  "order-book",
+] as const satisfies readonly WidgetType[];
+
 const widgetSchema = z.array(
   z.object({
     id: z.string(),
-    type: z.string(),
+    type: z.enum(WIDGET_TYPES),
     title: z.string(),
     position: z.object({ x: z.number(), y: z.number() }),
     size: z.object({ w: z.number(), h: z.number() }),
@@ -64,7 +73,7 @@ interface DashboardState {
 }
 
 const initialState: DashboardState = {
-  widgets: loadFromStorage(STORAGE_KEY, widgetSchema, DEFAULT_WIDGETS) as WidgetConfig[],
+  widgets: loadFromStorage(STORAGE_KEY, widgetSchema, DEFAULT_WIDGETS),
 };
 
 const dashboardSlice = createSlice({
@@ -73,6 +82,15 @@ const dashboardSlice = createSlice({
   reducers: {
     reorderWidgets(state, action: PayloadAction<WidgetConfig[]>) {
       state.widgets = action.payload;
+      saveToStorage(STORAGE_KEY, state.widgets);
+    },
+    /** Moves a widget to the position of another one, as a drag and drop does. */
+    moveWidget(state, action: PayloadAction<{ id: string; overId: string }>) {
+      const from = state.widgets.findIndex((w) => w.id === action.payload.id);
+      const to = state.widgets.findIndex((w) => w.id === action.payload.overId);
+      const [moved] = from === -1 || to === -1 ? [] : state.widgets.splice(from, 1);
+      if (!moved) return;
+      state.widgets.splice(to, 0, moved);
       saveToStorage(STORAGE_KEY, state.widgets);
     },
     toggleWidgetVisibility(state, action: PayloadAction<string>) {
@@ -105,6 +123,12 @@ const dashboardSlice = createSlice({
   },
 });
 
-export const { reorderWidgets, toggleWidgetVisibility, addWidget, removeWidget, resetLayout } =
-  dashboardSlice.actions;
+export const {
+  reorderWidgets,
+  moveWidget,
+  toggleWidgetVisibility,
+  addWidget,
+  removeWidget,
+  resetLayout,
+} = dashboardSlice.actions;
 export const dashboardReducer = dashboardSlice.reducer;

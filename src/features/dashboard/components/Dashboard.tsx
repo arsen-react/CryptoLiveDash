@@ -1,13 +1,26 @@
-import { useAppSelector } from "@/app/store";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { OrderBook } from "@/features/market/components/OrderBook";
-import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import { LoadingSkeleton } from "@/shared/components/LoadingSkeleton";
 import { PriceChange } from "@/shared/components/PriceChange";
+import type { WidgetConfig, WidgetType } from "@/shared/types/common";
 import { formatCurrency, formatPrice } from "@/shared/utils/formatters";
-import { lazy, Suspense } from "react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
+import { lazy, Suspense, type ReactNode } from "react";
+import { moveWidget, resetLayout, toggleWidgetVisibility } from "../dashboardSlice";
+import { layoutKeyboardCoordinates } from "../layoutKeyboardCoordinates";
 import { MiniMarket } from "./MiniMarket";
 import { MiniPortfolio } from "./MiniPortfolio";
 import { MiniWatchlist } from "./MiniWatchlist";
+import { WidgetWrapper } from "./WidgetWrapper";
 
 const TradingChart = lazy(() => import("@/features/chart/components/TradingChart"));
 
@@ -21,9 +34,51 @@ const MOCK_STATS: Record<
   SOLUSDT: { price: 178.3, change: 3.12, high: 182, low: 172, vol: 560_000_000 },
 };
 
+const WIDGETS: Partial<Record<WidgetType, { render: () => ReactNode; bodyClassName?: string }>> = {
+  chart: {
+    render: () => (
+      <Suspense fallback={<LoadingSkeleton lines={12} />}>
+        <TradingChart />
+      </Suspense>
+    ),
+    bodyClassName: "p-3",
+  },
+  "order-book": { render: () => <OrderBook />, bodyClassName: "p-2" },
+  "market-overview": { render: () => <MiniMarket /> },
+  watchlist: { render: () => <MiniWatchlist /> },
+  portfolio: { render: () => <MiniPortfolio /> },
+};
+
+// Tailwind only generates classes it can find written out in full.
+const COLUMN_SPANS: Record<number, string> = {
+  3: "xl:col-span-3",
+  4: "xl:col-span-4",
+  6: "xl:col-span-6",
+  8: "xl:col-span-8",
+  12: "xl:col-span-12",
+};
+
+const isSupported = (widget: WidgetConfig) => widget.type in WIDGETS;
+
 export default function Dashboard() {
+  const dispatch = useAppDispatch();
   const selectedSymbol = useAppSelector((state) => state.market.selectedSymbol);
   const liveTicker = useAppSelector((state) => state.market.liveTickers[selectedSymbol]);
+  const widgets = useAppSelector((state) => state.dashboard.widgets);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: layoutKeyboardCoordinates }),
+  );
+
+  const visibleWidgets = widgets.filter((w) => w.visible && isSupported(w));
+  const hiddenWidgets = widgets.filter((w) => !w.visible && isSupported(w));
+
+  function handleDragEnd({ active, over }: DragEndEvent) {
+    if (over && active.id !== over.id) {
+      dispatch(moveWidget({ id: String(active.id), overId: String(over.id) }));
+    }
+  }
 
   const fallback = MOCK_STATS[selectedSymbol];
   const price = liveTicker ? parseFloat(liveTicker.price) : (fallback?.price ?? 0);
@@ -68,66 +123,56 @@ export default function Dashboard() {
         {!hasData && (
           <span className="text-sm text-muted animate-pulse">Waiting for market data...</span>
         )}
-      </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-4">
-        <div className="space-y-4 min-w-0">
-          <ErrorBoundary>
-            <Suspense fallback={<LoadingSkeleton lines={12} />}>
-              <TradingChart />
-            </Suspense>
-          </ErrorBoundary>
-
-          <div className="widget-card">
-            <div className="widget-header">
-              <h3 className="widget-title">Top Markets</h3>
-            </div>
-            <div className="widget-body">
-              <ErrorBoundary>
-                <MiniMarket />
-              </ErrorBoundary>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="widget-card">
-            <div className="widget-header">
-              <h3 className="widget-title">Order Book</h3>
-              <span className="text-xs text-muted font-mono">
-                {selectedSymbol.replace("USDT", "")}/USDT
-              </span>
-            </div>
-            <div className="p-2">
-              <ErrorBoundary>
-                <OrderBook />
-              </ErrorBoundary>
-            </div>
-          </div>
-
-          <div className="widget-card">
-            <div className="widget-header">
-              <h3 className="widget-title">Watchlist</h3>
-            </div>
-            <div className="widget-body">
-              <ErrorBoundary>
-                <MiniWatchlist />
-              </ErrorBoundary>
-            </div>
-          </div>
-
-          <div className="widget-card">
-            <div className="widget-header">
-              <h3 className="widget-title">Portfolio</h3>
-            </div>
-            <div className="widget-body">
-              <ErrorBoundary>
-                <MiniPortfolio />
-              </ErrorBoundary>
-            </div>
-          </div>
+        <div className="flex items-center gap-2 flex-wrap ml-auto text-xs">
+          {hiddenWidgets.map((widget) => (
+            <button
+              key={widget.id}
+              type="button"
+              onClick={() => dispatch(toggleWidgetVisibility(widget.id))}
+              className="px-2.5 py-1 rounded-lg border border-dashed border-border text-muted hover:text-white hover:border-accent/50 transition-colors"
+            >
+              + {widget.title}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => dispatch(resetLayout())}
+            className="px-2.5 py-1 rounded-lg text-muted hover:text-white hover:bg-surface-hover transition-colors"
+          >
+            Reset layout
+          </button>
         </div>
       </div>
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={visibleWidgets.map((w) => w.id)} strategy={rectSortingStrategy}>
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 items-start">
+            {visibleWidgets.map((widget) => {
+              const config = WIDGETS[widget.type];
+              return (
+                <WidgetWrapper
+                  key={widget.id}
+                  id={widget.id}
+                  title={widget.title}
+                  onHide={() => dispatch(toggleWidgetVisibility(widget.id))}
+                  className={COLUMN_SPANS[widget.size.w] ?? "xl:col-span-4"}
+                  bodyClassName={config?.bodyClassName}
+                  extra={
+                    widget.type === "order-book" && (
+                      <span className="text-xs text-muted font-mono">
+                        {selectedSymbol.replace("USDT", "")}/USDT
+                      </span>
+                    )
+                  }
+                >
+                  {config?.render()}
+                </WidgetWrapper>
+              );
+            })}
+          </div>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

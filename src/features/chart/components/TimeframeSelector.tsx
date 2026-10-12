@@ -9,7 +9,7 @@ export function TimeframeSelector() {
   const activeTimeframe = useAppSelector((state) => state.chart.timeframe);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex flex-wrap items-center gap-1">
       {TIMEFRAMES.map((tf) => (
         <button
           key={tf.value}

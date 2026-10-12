@@ -47,7 +47,7 @@ describe("routes", () => {
   });
 
   it.each([
-    ["/", "Top Markets"],
+    ["/", "Trading Chart"],
     ["/market", "Market Overview"],
     ["/portfolio", "Portfolio"],
     ["/watchlist", "Watchlist"],
