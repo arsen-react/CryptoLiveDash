@@ -3,7 +3,7 @@ import { CoinSearch } from "@/shared/components/CoinSearch";
 import { Modal } from "@/shared/components/Modal";
 import { cn } from "@/shared/utils/cn";
 import { formatPrice } from "@/shared/utils/formatters";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { addAlert } from "../alertsSlice";
 
@@ -18,6 +18,7 @@ interface CreateAlertModalProps {
 
 export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
   const dispatch = useAppDispatch();
+  const targetPriceId = useId();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const [condition, setCondition] = useState<"above" | "below">("above");
   const liveTicker = useAppSelector((state) =>
@@ -109,8 +110,11 @@ export function CreateAlertModal({ open, onClose }: CreateAlertModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs text-muted mb-1.5">Target Price (USD)</label>
+            <label htmlFor={targetPriceId} className="block text-xs text-muted mb-1.5">
+              Target Price (USD)
+            </label>
             <input
+              id={targetPriceId}
               type="number"
               step="any"
               {...register("targetPrice", { valueAsNumber: true, required: true, min: 0.000001 })}

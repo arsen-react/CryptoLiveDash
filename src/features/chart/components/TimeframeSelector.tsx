@@ -14,6 +14,7 @@ export function TimeframeSelector() {
         <button
           key={tf.value}
           onClick={() => dispatch(setTimeframe(tf.value as Timeframe))}
+          aria-pressed={activeTimeframe === tf.value}
           className={cn(
             "px-2.5 py-1 text-xs font-medium rounded transition-colors",
             activeTimeframe === tf.value

@@ -36,7 +36,12 @@ describe("Modal", () => {
 
   it("closes from the × button", () => {
     const onClose = renderModal();
-    fireEvent.click(screen.getByRole("button", { name: "×" }));
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("is a modal dialog named by its title", () => {
+    renderModal();
+    expect(screen.getByRole("dialog", { name: "Add alert" })).toHaveAttribute("aria-modal", "true");
   });
 });

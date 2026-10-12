@@ -31,6 +31,7 @@ export function CoinSearch({ onSelect, placeholder = "Search coin..." }: CoinSea
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
+        aria-label="Search coins"
         autoFocus
         className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors"
       />

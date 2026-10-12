@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/app/store";
 import { CoinSearch } from "@/shared/components/CoinSearch";
 import { Modal } from "@/shared/components/Modal";
 import { formatPrice } from "@/shared/utils/formatters";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useForm } from "react-hook-form";
 import { addPosition } from "../portfolioSlice";
 
@@ -18,6 +18,8 @@ interface AddPositionModalProps {
 
 export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
   const dispatch = useAppDispatch();
+  const amountId = useId();
+  const buyPriceId = useId();
   const [selectedSymbol, setSelectedSymbol] = useState<string | null>(null);
   const liveTicker = useAppSelector((state) =>
     selectedSymbol ? state.market.liveTickers[selectedSymbol] : null,
@@ -83,8 +85,11 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
           )}
 
           <div>
-            <label className="block text-xs text-muted mb-1.5">Amount</label>
+            <label htmlFor={amountId} className="block text-xs text-muted mb-1.5">
+              Amount
+            </label>
             <input
+              id={amountId}
               type="number"
               step="any"
               {...register("amount", { valueAsNumber: true, required: true, min: 0.000001 })}
@@ -95,8 +100,11 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
           </div>
 
           <div>
-            <label className="block text-xs text-muted mb-1.5">Buy Price (USD)</label>
+            <label htmlFor={buyPriceId} className="block text-xs text-muted mb-1.5">
+              Buy Price (USD)
+            </label>
             <input
+              id={buyPriceId}
               type="number"
               step="any"
               {...register("buyPrice", { valueAsNumber: true, required: true, min: 0.000001 })}

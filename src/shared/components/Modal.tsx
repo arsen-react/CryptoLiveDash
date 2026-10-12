@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
 
 interface ModalProps {
@@ -11,6 +11,7 @@ interface ModalProps {
 
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -32,15 +33,21 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       }}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className={cn(
           "bg-surface-secondary border border-border rounded-xl shadow-2xl w-full max-w-md mx-4 animate-in",
           className,
         )}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h3 className="text-sm font-semibold">{title}</h3>
+          <h3 id={titleId} className="text-sm font-semibold">
+            {title}
+          </h3>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="text-muted hover:text-white transition-colors text-lg leading-none"
           >
             &times;

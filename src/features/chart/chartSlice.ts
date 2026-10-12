@@ -34,6 +34,5 @@ const chartSlice = createSlice({
   },
 });
 
-export const { setTimeframe, toggleVolume, toggleMA, setMaPeriod } =
-  chartSlice.actions;
+export const { setTimeframe, toggleVolume, toggleMA, setMaPeriod } = chartSlice.actions;
 export const chartReducer = chartSlice.reducer;

@@ -10,9 +10,4 @@ export interface WidgetConfig {
 }
 
 export type WidgetType =
-  | "chart"
-  | "market-overview"
-  | "portfolio"
-  | "watchlist"
-  | "alerts"
-  | "order-book";
+  "chart" | "market-overview" | "portfolio" | "watchlist" | "alerts" | "order-book";

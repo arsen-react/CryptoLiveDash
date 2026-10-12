@@ -1,0 +1,6 @@
+# Keep LF in every checkout (Prettier expects it, and Windows would otherwise convert to CRLF).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

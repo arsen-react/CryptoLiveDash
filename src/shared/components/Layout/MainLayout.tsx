@@ -1,18 +1,17 @@
-import { useAppDispatch, useAppSelector } from "@/app/store";
+import { useAppDispatch } from "@/app/store";
 import { PriceTicker } from "@/features/market/components/PriceTicker";
 import { setWsStatus, updateTickers } from "@/features/market/marketSlice";
 import { miniTickerToTicker } from "@/features/market/miniTicker";
 import { useWebSocket } from "@/shared/hooks/useWebSocket";
 import type { WebSocketMiniTickerMessage } from "@/shared/types/market";
 import { BINANCE_WS_URL } from "@/shared/utils/constants";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
 
 export function MainLayout() {
   const dispatch = useAppDispatch();
-  const connectionStatus = useAppSelector((state) => state.market.wsStatus);
 
   const handleMessage = useCallback(
     (data: WebSocketMiniTickerMessage | WebSocketMiniTickerMessage[]) => {
@@ -33,9 +32,9 @@ export function MainLayout() {
     onMessage: handleMessage,
   });
 
-  if (status !== connectionStatus) {
+  useEffect(() => {
     dispatch(setWsStatus(status));
-  }
+  }, [status, dispatch]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
