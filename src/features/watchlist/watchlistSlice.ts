@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { z } from "zod";
+import * as z from "zod/mini";
 import type { WatchlistItem } from "@/shared/types/portfolio";
 import { loadFromStorage, saveToStorage } from "@/shared/utils/storage";
 

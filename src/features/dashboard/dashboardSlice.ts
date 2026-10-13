@@ -1,7 +1,7 @@
 import type { WidgetConfig, WidgetType } from "@/shared/types/common";
 import { loadFromStorage, saveToStorage } from "@/shared/utils/storage";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 const STORAGE_KEY = "cld-dashboard";
 

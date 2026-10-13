@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { z } from "zod";
+import * as z from "zod/mini";
 import type { Position } from "@/shared/types/portfolio";
 import { loadFromStorage, saveToStorage } from "@/shared/utils/storage";
 
@@ -9,8 +9,8 @@ const positionSchema = z.array(
   z.object({
     id: z.string(),
     symbol: z.string(),
-    amount: z.number().positive().max(1_000_000_000),
-    buyPrice: z.number().positive().max(1_000_000_000),
+    amount: z.number().check(z.positive(), z.maximum(1_000_000_000)),
+    buyPrice: z.number().check(z.positive(), z.maximum(1_000_000_000)),
     addedAt: z.number(),
   }),
 );

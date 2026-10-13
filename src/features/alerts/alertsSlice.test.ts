@@ -1,5 +1,37 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { addAlert, alertsReducer, removeAlert, toggleAlert, triggerAlert } from "./alertsSlice";
+
+const storedAlert = {
+  id: "a1",
+  symbol: "ETHUSDT",
+  targetPrice: 3_000,
+  condition: "below",
+  active: false,
+  createdAt: 1,
+  triggeredAt: 2,
+};
+
+const loadAlerts = async (stored: unknown) => {
+  localStorage.setItem("cld-alerts", JSON.stringify(stored));
+  vi.resetModules();
+  const { alertsReducer: freshReducer } = await import("./alertsSlice");
+  return freshReducer(undefined, { type: "init" }).alerts;
+};
+
+describe("alerts persistence", () => {
+  it("restores saved alerts, including when they triggered", async () => {
+    expect(await loadAlerts([storedAlert])).toEqual([storedAlert]);
+  });
+
+  it.each([
+    ["an unknown condition", { condition: "sideways" }],
+    ["a negative target", { targetPrice: -1 }],
+    ["a missing id", { id: undefined }],
+  ])("discards saved alerts with %s", async (_, change) => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(await loadAlerts([{ ...storedAlert, ...change }])).toEqual([]);
+  });
+});
 
 const withAlert = () => {
   const state = alertsReducer(

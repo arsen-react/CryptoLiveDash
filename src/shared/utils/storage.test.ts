@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { z } from "zod";
+import * as z from "zod/mini";
 import { loadFromStorage, saveToStorage } from "./storage";
 
 const schema = z.object({ count: z.number() });

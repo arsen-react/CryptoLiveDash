@@ -1,10 +1,10 @@
-import type { ZodType } from "zod";
+import type { ZodMiniType } from "zod/mini";
 
 /**
  * Safely read from localStorage with Zod schema validation.
  * Returns fallback if key doesn't exist, data is corrupted, or fails validation.
  */
-export function loadFromStorage<T>(key: string, schema: ZodType<T>, fallback: T): T {
+export function loadFromStorage<T>(key: string, schema: ZodMiniType<T>, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;

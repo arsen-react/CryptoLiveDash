@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { z } from "zod";
+import * as z from "zod/mini";
 import type { PriceAlert } from "@/shared/types/portfolio";
 import { loadFromStorage, saveToStorage } from "@/shared/utils/storage";
 
@@ -9,11 +9,11 @@ const alertsSchema = z.array(
   z.object({
     id: z.string(),
     symbol: z.string(),
-    targetPrice: z.number().positive().max(1_000_000_000),
+    targetPrice: z.number().check(z.positive(), z.maximum(1_000_000_000)),
     condition: z.enum(["above", "below"]),
     active: z.boolean(),
     createdAt: z.number(),
-    triggeredAt: z.number().optional(),
+    triggeredAt: z.optional(z.number()),
   }),
 );
 
