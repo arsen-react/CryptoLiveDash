@@ -52,7 +52,7 @@ CryptoLiveDash is a React dashboard that streams live market data from Binance o
 - **Drag-and-drop dashboard** with @dnd-kit, by mouse or keyboard; the layout is saved
 - **Route-level code splitting** with `React.lazy`
 - **Validated persistence**: portfolio, watchlist, alerts and layout are saved to localStorage and checked with Zod on load, so corrupted or tampered data falls back safely
-- **177 automated tests** with Vitest and React Testing Library, and coverage gates in CI (see [Testing](#testing))
+- **179 automated tests** with Vitest and React Testing Library, and coverage gates in CI (see [Testing](#testing))
 - **TypeScript** in strict mode, ESLint with the React Compiler rules, feature-based folder structure
 
 ## Tech Stack
@@ -126,7 +126,7 @@ Open [http://localhost:3000](http://localhost:3000) — no API keys needed.
 ## Testing
 
 ```bash
-npm run test           # run all 177 tests
+npm run test           # run all 179 tests
 npm run test:coverage  # with the coverage report and thresholds
 npm run check          # format check, lint, tests with coverage and build, as CI runs them
 ```
@@ -137,7 +137,7 @@ npm run check          # format check, lint, tests with coverage and build, as C
 | RTK Query endpoints | USDT filtering, kline parsing, order-book mapping, request URLs                                       |
 | Hooks               | WebSocket lifecycle, reconnects, latest-callback handling, debounce, localStorage                     |
 | Screens             | dashboard (including keyboard drag and drop), chart, market, order book, portfolio, watchlist, alerts |
-| Shell               | header search, sidebar, live-status reporting, every route, the app booting                           |
+| Shell               | header search, sidebar, live-status reporting, every route, the not-found page, the app booting       |
 | Utilities           | formatters, ticker mapping, class merging, Zod-validated storage                                      |
 
 Coverage is about 97% of lines and 91% of branches. CI fails below 95% of statements and lines or 88% of branches and functions.

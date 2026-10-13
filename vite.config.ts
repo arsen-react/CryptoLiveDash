@@ -39,6 +39,10 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     include: ["src/**/*.test.{ts,tsx}"],
+    // One jsdom per worker: a worker per core ran out of memory on a 16-core, 16 GB laptop,
+    // and instrumented component tests on a busy machine can pass the default 5 s.
+    maxWorkers: "50%",
+    testTimeout: 15_000,
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],

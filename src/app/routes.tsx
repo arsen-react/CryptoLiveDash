@@ -1,4 +1,5 @@
 import { MainLayout } from "@/shared/components/Layout/MainLayout";
+import { NotFound } from "@/shared/components/NotFound";
 import type { RouteObject } from "react-router-dom";
 import { lazyRoute } from "./lazyLoad";
 
@@ -26,6 +27,7 @@ export const routes: RouteObject[] = [
         path: "/alerts",
         element: lazyRoute(() => import("@/features/alerts/components/AlertsList")),
       },
+      { path: "*", element: <NotFound /> },
     ],
   },
 ];

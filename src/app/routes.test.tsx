@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -22,8 +23,8 @@ vi.mock("@/features/market/marketApi", async (importOriginal) => ({
 }));
 vi.mock("lightweight-charts", () => import("@/test/lightweight-charts"));
 
-// Pages are lazy chunks; the first load in a cold, instrumented run can take over a second.
-const LAZY_PAGE = { timeout: 5000 };
+// Pages are lazy chunks; a cold, instrumented first load on a busy machine can take seconds.
+const LAZY_PAGE = { timeout: 10_000 };
 
 describe("routes", () => {
   beforeEach(() => {
@@ -39,6 +40,7 @@ describe("routes", () => {
     ["/portfolio", "Portfolio"],
     ["/watchlist", "Watchlist"],
     ["/alerts", "Price Alerts"],
+    ["/no-such-page", "Page not found"],
   ])("loads the %s page inside the layout", async (path, heading) => {
     const router = createMemoryRouter(routes, { initialEntries: [path] });
     render(
@@ -49,6 +51,20 @@ describe("routes", () => {
 
     expect(await screen.findByRole("heading", { name: heading }, LAZY_PAGE)).toBeInTheDocument();
     expect(screen.getByRole("banner")).toHaveTextContent("CryptoLiveDash");
+  });
+
+  it("links unknown addresses back to the dashboard", async () => {
+    const router = createMemoryRouter(routes, { initialEntries: ["/no-such-page"] });
+    render(
+      <Provider store={makeStore()}>
+        <RouterProvider router={router} />
+      </Provider>,
+    );
+
+    await userEvent.click(screen.getByRole("link", { name: "Back to the dashboard" }));
+    expect(
+      await screen.findByRole("heading", { name: "Trading Chart" }, LAZY_PAGE),
+    ).toBeInTheDocument();
   });
 
   it("boots the whole app on the dashboard", async () => {
