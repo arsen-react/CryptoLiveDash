@@ -2,7 +2,7 @@
 
 Real-time cryptocurrency trading dashboard with live Binance market data, TradingView candlestick charts, an order book, portfolio tracking, price alerts and drag-and-drop widgets.
 
-![CryptoLiveDash: live BTC/USDT chart, order book, top markets and watchlist](./docs/preview.png)
+![CryptoLiveDash: live BTC/USDT chart, order book, market overview, watchlist and portfolio widgets](./docs/preview.png)
 
 ---
 
@@ -47,30 +47,33 @@ CryptoLiveDash is a React dashboard that streams live market data from Binance o
 
 - **Live WebSocket streams** for all-market tickers (`!miniTicker@arr`) and per-symbol candles, with capped reconnects and a clean teardown when the symbol or timeframe changes
 - **Redux Toolkit + RTK Query** for application state and cached REST data
-- **TradingView Lightweight Charts**, with live candles applied through `update()` instead of re-setting the series
-- **Drag-and-drop dashboard** with @dnd-kit
+- **Price alerts checked on every live price update** by a Redux listener middleware, whichever page is open, with browser notifications when allowed
+- **TradingView Lightweight Charts**, with live candles applied through `update()` instead of re-setting the series, and sized to its container by a `ResizeObserver`
+- **Drag-and-drop dashboard** with @dnd-kit, by mouse or keyboard; the layout is saved
 - **Route-level code splitting** with `React.lazy`
 - **Validated persistence**: portfolio, watchlist, alerts and layout are saved to localStorage and checked with Zod on load, so corrupted or tampered data falls back safely
-- **Browser notifications** when a price alert triggers
-- **83 automated tests** with Vitest and React Testing Library (see [Testing](#testing))
-- **TypeScript** in strict mode, feature-based folder structure
+- **177 automated tests** with Vitest and React Testing Library, and coverage gates in CI (see [Testing](#testing))
+- **TypeScript** in strict mode, ESLint with the React Compiler rules, feature-based folder structure
 
 ## Tech Stack
 
-| Category  | Technology                     |
-| --------- | ------------------------------ |
-| Framework | React 19 + TypeScript          |
-| Build     | Vite                           |
-| State     | Redux Toolkit + RTK Query      |
-| Charts    | TradingView Lightweight Charts |
-| Styling   | TailwindCSS                    |
-| DnD       | @dnd-kit                       |
-| Forms     | React Hook Form + Zod          |
-| Routing   | React Router v7                |
-| Testing   | Vitest + React Testing Library |
-| CI        | GitHub Actions                 |
+| Category   | Technology                                 |
+| ---------- | ------------------------------------------ |
+| Framework  | React 19 + TypeScript 6                    |
+| Build      | Vite 8 (Rolldown)                          |
+| State      | Redux Toolkit + RTK Query                  |
+| Charts     | TradingView Lightweight Charts 5           |
+| Styling    | Tailwind CSS 4                             |
+| DnD        | @dnd-kit                                   |
+| Forms      | React Hook Form                            |
+| Validation | Zod 4 (`zod/mini`) for the persisted state |
+| Routing    | React Router 7                             |
+| Testing    | Vitest 5 + React Testing Library           |
+| CI         | GitHub Actions                             |
 
 ## Quick Start
+
+Requires Node.js 22 or newer.
 
 ```bash
 git clone https://github.com/arsen-react/CryptoLiveDash.git
@@ -85,9 +88,9 @@ Open [http://localhost:3000](http://localhost:3000) — no API keys needed.
 
 ### Dashboard
 
-- Drag-and-drop widget grid with persistent layout
-- Customizable widget arrangement
-- Reset to default layout
+- Drag a widget by its handle with the mouse, or with the keyboard: Space to lift, arrow keys to move one place earlier or later, Space to drop
+- Hide widgets and bring them back, or reset to the default layout
+- The layout is saved in localStorage
 
 ### Trading Chart
 
@@ -104,7 +107,7 @@ Open [http://localhost:3000](http://localhost:3000) — no API keys needed.
 
 ### Portfolio Tracker
 
-- Add/remove positions
+- Add positions, with the buy price pre-filled from the live price
 - Real-time P&L calculation
 - Total portfolio value and cost basis
 
@@ -116,24 +119,28 @@ Open [http://localhost:3000](http://localhost:3000) — no API keys needed.
 ### Price Alerts
 
 - Set above/below price targets
-- Browser notifications on trigger
+- Alerts fire on any page as soon as the live price reaches them
+- Pause and resume alerts
+- Browser notifications on trigger, when the browser allows them
 
 ## Testing
 
 ```bash
-npm run test           # run all 83 tests
-npm run test:coverage  # with a coverage report
+npm run test           # run all 177 tests
+npm run test:coverage  # with the coverage report and thresholds
+npm run check          # format check, lint, tests with coverage and build, as CI runs them
 ```
 
-The suite covers the state, data and hook layers. Feature screens (chart, order book, portfolio pages) are not covered yet.
+| Area                | What is tested                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------- |
+| Redux slices        | add, update, remove, toggles, persistence, tampered storage, the alerts listener                      |
+| RTK Query endpoints | USDT filtering, kline parsing, order-book mapping, request URLs                                       |
+| Hooks               | WebSocket lifecycle, reconnects, latest-callback handling, debounce, localStorage                     |
+| Screens             | dashboard (including keyboard drag and drop), chart, market, order book, portfolio, watchlist, alerts |
+| Shell               | header search, sidebar, live-status reporting, every route, the app booting                           |
+| Utilities           | formatters, ticker mapping, class merging, Zod-validated storage                                      |
 
-| Area                 | What is tested                                                   | Line coverage |
-| -------------------- | ---------------------------------------------------------------- | ------------- |
-| Redux slices (all 6) | add, update, remove, toggles, persistence, tampered storage      | 100%          |
-| RTK Query endpoints  | USDT filtering, kline parsing, order-book mapping, request URLs  | 100%          |
-| Hooks                | WebSocket lifecycle and reconnects, debounce, localStorage       | 100%          |
-| Utilities            | formatters, ticker mapping, class merging, Zod-validated storage | 92–100%       |
-| Shared components    | Modal, ErrorBoundary, PriceChange, LastUpdated                   | 100%          |
+Coverage is about 97% of lines and 91% of branches. CI fails below 95% of statements and lines or 88% of branches and functions.
 
 ## Technical Challenges & Solutions
 
@@ -149,11 +156,23 @@ Closing a socket during cleanup triggered its own reconnect logic, so switching 
 
 **Solution**: The hook now marks a socket as disposed on cleanup, cancels the pending reconnect and ignores late events. Two regression tests reproduce the original bug.
 
-### Challenge 3: Chart performance with 500+ candles
+### Challenge 3: Price alerts that only fired on one page
+
+Alerts were checked inside the Alerts page, so a target reached while the user watched the dashboard went unnoticed.
+
+**Solution**: A Redux listener middleware checks the active alerts on every live price update, independent of the UI. Tests dispatch price updates to a store with no page mounted.
+
+### Challenge 4: Keyboard reordering on a grid of mixed widths
+
+dnd-kit's default keyboard handling moves a widget to the nearest one in the arrow's direction, which on a 12-column grid with wide and narrow widgets jumped to the next row.
+
+**Solution**: A custom coordinate getter moves the widget one place earlier or later in the saved order. The test reproduces the real grid geometry.
+
+### Challenge 5: Chart performance with 500+ candles
 
 **Solution**: TradingView Lightweight Charts renders on canvas, and live candles are applied with `update()` instead of `setData()`, so a new tick never redraws the whole series.
 
-### Challenge 4: Persisting state safely
+### Challenge 6: Persisting state safely
 
 **Solution**: Every slice loads its saved state through a Zod schema. Invalid or tampered data falls back to defaults, and a full storage quota logs a warning instead of crashing the app.
 
@@ -165,26 +184,28 @@ npm run build          # Type-check and production build
 npm run preview        # Preview production build
 npm run lint           # ESLint check
 npm run format         # Prettier format
+npm run format:check   # Prettier check
 npm run test           # Run tests
 npm run test:watch     # Watch mode
-npm run test:coverage  # Tests with coverage report
+npm run test:coverage  # Tests with coverage report and thresholds
+npm run check          # Everything CI runs
 ```
 
 ## Project Structure
 
 ```
 src/
-├── app/              # Store, router, App entry
+├── app/              # Store, routes, App entry
 ├── features/         # Feature modules (dashboard, market, chart, etc.)
 │   ├── dashboard/    # Drag-and-drop widget grid
 │   ├── market/       # Market data, ticker, order book
 │   ├── chart/        # TradingView chart integration
 │   ├── portfolio/    # Portfolio tracking
 │   ├── watchlist/    # Coin watchlist
-│   └── alerts/       # Price alerts
+│   └── alerts/       # Price alerts and the alert listener
 ├── shared/           # Reusable hooks, components, utils, types
-├── styles/           # Global styles
-└── test/             # Vitest setup
+├── styles/           # Tailwind theme and global styles
+└── test/             # Vitest setup, render helper, fixtures
 ```
 
 ## License
