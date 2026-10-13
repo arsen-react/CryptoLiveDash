@@ -20,8 +20,7 @@ const chart = vi.hoisted(() => {
   const volume = makeSeries();
   const fitContent = vi.fn();
   const api = {
-    addCandlestickSeries: vi.fn(() => candles),
-    addHistogramSeries: vi.fn(() => volume),
+    addSeries: vi.fn((definition: string) => (definition === "Candlestick" ? candles : volume)),
     applyOptions: vi.fn(),
     remove: vi.fn(),
     timeScale: vi.fn(() => ({ fitContent })),
@@ -30,6 +29,8 @@ const chart = vi.hoisted(() => {
 });
 
 vi.mock("lightweight-charts", () => ({
+  CandlestickSeries: "Candlestick",
+  HistogramSeries: "Histogram",
   ColorType: { Solid: "solid" },
   createChart: chart.createChart,
 }));
@@ -59,6 +60,14 @@ describe("TradingChart", () => {
     renderWithProviders(<TradingChart />);
 
     expect(chart.createChart).toHaveBeenCalledTimes(1);
+    expect(chart.api.addSeries).toHaveBeenCalledWith(
+      "Candlestick",
+      expect.objectContaining({ upColor: "#22c55e", downColor: "#ef4444" }),
+    );
+    expect(chart.api.addSeries).toHaveBeenCalledWith(
+      "Histogram",
+      expect.objectContaining({ priceFormat: { type: "volume" }, priceScaleId: "" }),
+    );
     expect(chart.candles.setData).toHaveBeenLastCalledWith([
       { time: T0 / 1000, open: 100, high: 106, low: 99, close: 105 },
       { time: (T0 + HOUR) / 1000, open: 105, high: 106, low: 91, close: 92 },
@@ -131,14 +140,14 @@ describe("TradingChart", () => {
     expect(chart.candles.setData.mock.lastCall?.[0]).toHaveLength(200);
   });
 
-  it("follows the window size, until it is unmounted and removed", () => {
+  it("sizes itself to its container and is removed when unmounted", () => {
     const { unmount } = renderWithProviders(<TradingChart />);
-    window.dispatchEvent(new Event("resize"));
-    expect(chart.api.applyOptions).toHaveBeenCalledTimes(1);
+    expect(chart.createChart).toHaveBeenCalledWith(
+      expect.any(HTMLDivElement),
+      expect.objectContaining({ autoSize: true }),
+    );
 
     unmount();
-    window.dispatchEvent(new Event("resize"));
-    expect(chart.api.applyOptions).toHaveBeenCalledTimes(1);
     expect(chart.api.remove).toHaveBeenCalledTimes(1);
   });
 

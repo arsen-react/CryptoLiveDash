@@ -6,10 +6,10 @@ import type { Kline, WebSocketKlineMessage } from "@/shared/types/market";
 import { BINANCE_WS_URL } from "@/shared/utils/constants";
 import { generateMockKlines } from "@/shared/utils/mockData";
 import {
+  CandlestickSeries,
   ColorType,
   createChart,
-  type CandlestickSeriesOptions,
-  type HistogramSeriesOptions,
+  HistogramSeries,
   type IChartApi,
   type ISeriesApi,
   type UTCTimestamp,
@@ -90,24 +90,23 @@ export default function TradingChart() {
         rightOffset: 5,
         barSpacing: 8,
       },
-      width: chartContainerRef.current.clientWidth,
-      height: 420,
+      autoSize: true,
     });
 
-    const candleSeries = chart.addCandlestickSeries({
+    const candleSeries = chart.addSeries(CandlestickSeries, {
       upColor: "#22c55e",
       downColor: "#ef4444",
       borderDownColor: "#ef4444",
       borderUpColor: "#22c55e",
       wickDownColor: "#ef444499",
       wickUpColor: "#22c55e99",
-    } as CandlestickSeriesOptions);
+    });
 
-    const volumeSeries = chart.addHistogramSeries({
+    const volumeSeries = chart.addSeries(HistogramSeries, {
       color: "#6366f1",
       priceFormat: { type: "volume" },
       priceScaleId: "",
-    } as HistogramSeriesOptions);
+    });
 
     volumeSeries.priceScale().applyOptions({
       scaleMargins: { top: 0.85, bottom: 0 },
@@ -117,16 +116,7 @@ export default function TradingChart() {
     candleSeriesRef.current = candleSeries;
     volumeSeriesRef.current = volumeSeries;
 
-    const handleResize = () => {
-      if (chartContainerRef.current) {
-        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
     return () => {
-      window.removeEventListener("resize", handleResize);
       chart.remove();
       chartRef.current = null;
       candleSeriesRef.current = null;
@@ -183,7 +173,7 @@ export default function TradingChart() {
       </div>
 
       <div className="relative overflow-hidden rounded-lg">
-        <div ref={chartContainerRef} />
+        <div ref={chartContainerRef} className="h-[420px]" />
         {isMock && !isLoading && (
           <div className="absolute top-3 left-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-medium px-2 py-1 rounded-sm">
             Demo data — Binance API unavailable

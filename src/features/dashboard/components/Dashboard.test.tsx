@@ -20,24 +20,7 @@ vi.mock("@/features/market/marketApi", async (importOriginal) => ({
   useGetKlinesQuery: vi.fn(),
   useGetOrderBookQuery: vi.fn(),
 }));
-vi.mock("lightweight-charts", () => {
-  const series = () => ({
-    setData() {},
-    update() {},
-    applyOptions() {},
-    priceScale: () => ({ applyOptions() {} }),
-  });
-  return {
-    ColorType: { Solid: "solid" },
-    createChart: () => ({
-      addCandlestickSeries: series,
-      addHistogramSeries: series,
-      applyOptions() {},
-      remove() {},
-      timeScale: () => ({ fitContent() {} }),
-    }),
-  };
-});
+vi.mock("lightweight-charts", () => import("@/test/lightweight-charts"));
 
 const DEFAULT_ORDER = ["Trading Chart", "Order Book", "Market Overview", "Watchlist", "Portfolio"];
 

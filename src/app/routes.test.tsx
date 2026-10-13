@@ -20,24 +20,7 @@ vi.mock("@/features/market/marketApi", async (importOriginal) => ({
   useGetKlinesQuery: vi.fn(),
   useGetOrderBookQuery: vi.fn(),
 }));
-vi.mock("lightweight-charts", () => {
-  const series = () => ({
-    setData() {},
-    update() {},
-    applyOptions() {},
-    priceScale: () => ({ applyOptions() {} }),
-  });
-  return {
-    ColorType: { Solid: "solid" },
-    createChart: () => ({
-      addCandlestickSeries: series,
-      addHistogramSeries: series,
-      applyOptions() {},
-      remove() {},
-      timeScale: () => ({ fitContent() {} }),
-    }),
-  };
-});
+vi.mock("lightweight-charts", () => import("@/test/lightweight-charts"));
 
 // Pages are lazy chunks; the first load in a cold, instrumented run can take over a second.
 const LAZY_PAGE = { timeout: 5000 };

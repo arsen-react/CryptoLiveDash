@@ -21,7 +21,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@reduxjs/toolkit": "^2.6.1",
     "clsx": "^2.1.1",
-    "lightweight-charts": "^4.2.2",
+    "lightweight-charts": "^5.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
