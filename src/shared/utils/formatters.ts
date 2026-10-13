@@ -24,6 +24,11 @@ export function formatPrice(value: number): string {
   return value.toFixed(8);
 }
 
+/** A dollar amount such as a profit or loss: always two decimals, unlike a coin price. */
+export function formatUsd(value: number): string {
+  return value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 export function formatPercent(value: number): string {
   const sign = value >= 0 ? "+" : "";
   return `${sign}${value.toFixed(2)}%`;

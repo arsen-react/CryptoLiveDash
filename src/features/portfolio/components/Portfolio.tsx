@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { PriceChange } from "@/shared/components/PriceChange";
-import { formatCurrency, formatPrice } from "@/shared/utils/formatters";
+import { formatCurrency, formatPrice, formatUsd } from "@/shared/utils/formatters";
 import { useState } from "react";
 import { removePosition } from "../portfolioSlice";
 import { AddPositionModal } from "./AddPositionModal";
@@ -109,7 +109,7 @@ export default function Portfolio() {
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-col items-end">
                       <span className={pos.pnl >= 0 ? "text-gain" : "text-loss"}>
-                        {pos.pnl >= 0 ? "+" : "-"}${formatPrice(Math.abs(pos.pnl))}
+                        {pos.pnl >= 0 ? "+" : "-"}${formatUsd(Math.abs(pos.pnl))}
                       </span>
                       <PriceChange value={pos.pnlPercent} className="text-xs!" />
                     </div>

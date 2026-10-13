@@ -4,8 +4,20 @@ import {
   formatPercent,
   formatPrice,
   formatTimestamp,
+  formatUsd,
   formatVolume,
 } from "./formatters";
+
+describe("formatUsd", () => {
+  it.each([
+    [0, "0.00"],
+    [0.004, "0.00"],
+    [12.5, "12.50"],
+    [3_000, "3,000.00"],
+  ])("formats %d as %s", (value, expected) => {
+    expect(formatUsd(value)).toBe(expected);
+  });
+});
 
 describe("formatCurrency", () => {
   it.each([

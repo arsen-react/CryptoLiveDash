@@ -46,6 +46,7 @@ describe("Portfolio", () => {
     expect(row("BTC").getByText("+10.00%")).toBeInTheDocument();
     expect(row("ETH").getByText("$6.00K")).toBeInTheDocument();
     expect(row("ETH").getByText("+0.00%")).toBeInTheDocument();
+    expect(row("ETH").getByText("+$0.00")).toBeInTheDocument();
 
     expect(totals("Total Value")).toBe("$39.00K");
     expect(totals("Total Cost")).toBe("$36.00K");
