@@ -98,7 +98,7 @@ export default function Dashboard() {
         {hasData && (
           <>
             <span className="text-2xl font-mono font-bold">${formatPrice(price)}</span>
-            <PriceChange value={change} className="!text-base" />
+            <PriceChange value={change} className="text-base!" />
             <div className="hidden md:flex items-center gap-4 text-xs text-muted">
               <div>
                 <span className="block">24h High</span>
@@ -114,7 +114,7 @@ export default function Dashboard() {
               </div>
             </div>
             {!liveTicker && (
-              <span className="text-[10px] text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded">
+              <span className="text-[10px] text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded-sm">
                 Demo data
               </span>
             )}

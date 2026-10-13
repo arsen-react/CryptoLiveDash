@@ -60,7 +60,7 @@ export function MiniMarket() {
               key={ticker.symbol}
               onClick={() => dispatch(setSelectedSymbol(ticker.symbol))}
               className={cn(
-                "w-full grid grid-cols-[1fr_auto_auto_auto] gap-x-3 items-center px-1 py-1.5 rounded transition-colors",
+                "w-full grid grid-cols-[1fr_auto_auto_auto] gap-x-3 items-center px-1 py-1.5 rounded-sm transition-colors",
                 isSelected ? "bg-accent/10" : "hover:bg-surface-hover",
               )}
             >
@@ -69,7 +69,7 @@ export function MiniMarket() {
                 <span className="text-muted">/USDT</span>
               </span>
               <span className="font-mono text-right">${formatPrice(parseFloat(price))}</span>
-              <PriceChange value={change} className="!text-xs text-right" />
+              <PriceChange value={change} className="text-xs! text-right" />
               <span className="font-mono text-muted text-right hidden sm:block">
                 ${formatVolume(vol)}
               </span>

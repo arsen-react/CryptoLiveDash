@@ -111,7 +111,7 @@ export default function Portfolio() {
                       <span className={pos.pnl >= 0 ? "text-gain" : "text-loss"}>
                         {pos.pnl >= 0 ? "+" : "-"}${formatPrice(Math.abs(pos.pnl))}
                       </span>
-                      <PriceChange value={pos.pnlPercent} className="!text-xs" />
+                      <PriceChange value={pos.pnlPercent} className="text-xs!" />
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">

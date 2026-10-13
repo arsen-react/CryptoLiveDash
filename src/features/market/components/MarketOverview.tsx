@@ -36,7 +36,7 @@ export default function MarketOverview() {
           <h2 className="text-xl font-semibold">Market Overview</h2>
           {isLoading && <span className="text-xs text-accent animate-pulse">Loading...</span>}
           {isMock && !isLoading && (
-            <span className="text-xs text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded">
+            <span className="text-xs text-yellow-500/70 bg-yellow-500/10 px-2 py-0.5 rounded-sm">
               Demo data
             </span>
           )}

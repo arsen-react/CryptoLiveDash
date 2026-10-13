@@ -76,7 +76,7 @@ export function Header({ connectionStatus }: HeaderProps) {
               <path d="m21 21-4.3-4.3" />
             </svg>
             <span className="hidden sm:inline">Search</span>
-            <kbd className="hidden sm:inline text-[10px] text-muted/60 bg-surface px-1.5 py-0.5 rounded border border-border">
+            <kbd className="hidden sm:inline text-[10px] text-muted/60 bg-surface px-1.5 py-0.5 rounded-sm border border-border">
               /
             </kbd>
           </button>

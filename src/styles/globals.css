@@ -1,6 +1,74 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+
+@theme {
+  --color-surface: #0f1117;
+  --color-surface-secondary: #151823;
+  --color-surface-tertiary: #1c1f2e;
+  --color-surface-hover: #242838;
+
+  --color-accent: #6366f1;
+  --color-accent-hover: #818cf8;
+
+  --color-gain: #22c55e;
+  --color-loss: #ef4444;
+  --color-muted: #64748b;
+  --color-border: #1e293b;
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  /* Tailwind CSS v4 gives buttons the default cursor; v3 used the pointer. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@utility widget-card {
+  background-color: #151823;
+  border: 1px solid #1e293b;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+@utility widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+@utility widget-title {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+@utility widget-body {
+  padding: 1rem;
+}
 
 @layer base {
   body {
@@ -39,37 +107,6 @@
   /* Selection */
   ::selection {
     background-color: #6366f140;
-  }
-}
-
-@layer components {
-  .widget-card {
-    background-color: #151823;
-    border: 1px solid #1e293b;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-  }
-
-  .widget-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #1e293b;
-  }
-
-  .widget-title {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-    font-weight: 600;
-    color: #fff;
-  }
-
-  .widget-body {
-    padding: 1rem;
   }
 }
 

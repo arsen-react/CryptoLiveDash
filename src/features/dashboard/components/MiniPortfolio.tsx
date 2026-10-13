@@ -32,7 +32,7 @@ export function MiniPortfolio() {
         </div>
         <div className="text-right">
           <p className="text-muted mb-0.5">P&L</p>
-          <PriceChange value={totalPnLPercent} className="!text-sm" />
+          <PriceChange value={totalPnLPercent} className="text-sm!" />
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export function MiniPortfolio() {
               <span className="font-medium">{pos.symbol.replace("USDT", "")}</span>
               <div className="flex items-center gap-3">
                 <span className="font-mono text-muted">{formatCurrency(pos.currentValue)}</span>
-                <PriceChange value={pos.pnlPercent} className="!text-xs w-16 text-right" />
+                <PriceChange value={pos.pnlPercent} className="text-xs! w-16 text-right" />
               </div>
             </div>
           ))}

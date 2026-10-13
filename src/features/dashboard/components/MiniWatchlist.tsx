@@ -39,14 +39,14 @@ export function MiniWatchlist() {
             key={item.symbol}
             onClick={() => dispatch(setSelectedSymbol(item.symbol))}
             className={cn(
-              "w-full flex items-center justify-between px-2 py-1.5 rounded transition-colors",
+              "w-full flex items-center justify-between px-2 py-1.5 rounded-sm transition-colors",
               isSelected ? "bg-accent/10 text-accent" : "hover:bg-surface-hover",
             )}
           >
             <span className="font-medium">{item.symbol.replace("USDT", "")}</span>
             <div className="flex items-center gap-3">
               <span className="font-mono">${formatPrice(price)}</span>
-              <PriceChange value={change} className="!text-xs w-16 text-right" />
+              <PriceChange value={change} className="text-xs! w-16 text-right" />
             </div>
           </button>
         );

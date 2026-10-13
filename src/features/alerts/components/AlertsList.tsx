@@ -63,7 +63,7 @@ export default function AlertsList() {
                   </div>
                   <div
                     className={cn(
-                      "text-xs px-2 py-0.5 rounded",
+                      "text-xs px-2 py-0.5 rounded-sm",
                       alert.condition === "above" ? "bg-gain/10 text-gain" : "bg-loss/10 text-loss",
                     )}
                   >
@@ -79,13 +79,13 @@ export default function AlertsList() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => dispatch(toggleAlert(alert.id))}
-                    className="text-xs text-muted hover:text-white transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                    className="text-xs text-muted hover:text-white transition-colors px-2 py-1 border border-border rounded-sm hover:bg-surface-hover"
                   >
                     Pause
                   </button>
                   <button
                     onClick={() => dispatch(removeAlert(alert.id))}
-                    className="text-xs text-muted hover:text-loss transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                    className="text-xs text-muted hover:text-loss transition-colors px-2 py-1 border border-border rounded-sm hover:bg-surface-hover"
                   >
                     Delete
                   </button>
@@ -115,13 +115,13 @@ export default function AlertsList() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => dispatch(toggleAlert(alert.id))}
-                    className="text-xs text-muted hover:text-white transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                    className="text-xs text-muted hover:text-white transition-colors px-2 py-1 border border-border rounded-sm hover:bg-surface-hover"
                   >
                     Resume
                   </button>
                   <button
                     onClick={() => dispatch(removeAlert(alert.id))}
-                    className="text-xs text-muted hover:text-loss transition-colors px-2 py-1 border border-border rounded hover:bg-surface-hover"
+                    className="text-xs text-muted hover:text-loss transition-colors px-2 py-1 border border-border rounded-sm hover:bg-surface-hover"
                   >
                     Delete
                   </button>

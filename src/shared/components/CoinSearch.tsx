@@ -33,7 +33,7 @@ export function CoinSearch({ onSelect, placeholder = "Search coin..." }: CoinSea
         placeholder={placeholder}
         aria-label="Search coins"
         autoFocus
-        className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors"
+        className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-hidden focus:border-accent transition-colors"
       />
       <div className="mt-2 max-h-64 overflow-y-auto space-y-0.5">
         {filtered.map((ticker) => (
@@ -51,7 +51,7 @@ export function CoinSearch({ onSelect, placeholder = "Search coin..." }: CoinSea
             </div>
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono">${formatPrice(parseFloat(ticker.price))}</span>
-              <PriceChange value={parseFloat(ticker.priceChangePercent)} className="!text-xs" />
+              <PriceChange value={parseFloat(ticker.priceChangePercent)} className="text-xs!" />
             </div>
           </button>
         ))}

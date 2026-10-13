@@ -93,7 +93,7 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
               step="any"
               {...register("amount", { valueAsNumber: true, required: true, min: 0.000001 })}
               placeholder="0.00"
-              className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors font-mono"
+              className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-hidden focus:border-accent transition-colors font-mono"
             />
             {errors.amount && <p className="text-xs text-loss mt-1">Enter a valid amount</p>}
           </div>
@@ -108,7 +108,7 @@ export function AddPositionModal({ open, onClose }: AddPositionModalProps) {
               step="any"
               {...register("buyPrice", { valueAsNumber: true, required: true, min: 0.000001 })}
               placeholder="0.00"
-              className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-none focus:border-accent transition-colors font-mono"
+              className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-white placeholder:text-muted outline-hidden focus:border-accent transition-colors font-mono"
             />
             {errors.buyPrice && <p className="text-xs text-loss mt-1">Enter a valid price</p>}
           </div>

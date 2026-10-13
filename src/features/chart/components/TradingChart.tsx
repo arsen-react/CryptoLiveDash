@@ -185,7 +185,7 @@ export default function TradingChart() {
       <div className="relative overflow-hidden rounded-lg">
         <div ref={chartContainerRef} />
         {isMock && !isLoading && (
-          <div className="absolute top-3 left-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-medium px-2 py-1 rounded">
+          <div className="absolute top-3 left-3 bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-medium px-2 py-1 rounded-sm">
             Demo data — Binance API unavailable
           </div>
         )}

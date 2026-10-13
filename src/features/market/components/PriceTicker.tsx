@@ -27,7 +27,7 @@ export const PriceTicker = memo(function PriceTicker() {
         <span className="text-xs font-mono text-white">
           ${formatPrice(parseFloat(ticker.price))}
         </span>
-        <PriceChange value={changePercent} className="!text-xs" />
+        <PriceChange value={changePercent} className="text-xs!" />
       </div>
     );
   });

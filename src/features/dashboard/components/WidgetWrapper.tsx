@@ -52,7 +52,7 @@ export function WidgetWrapper({
             ref={setActivatorNodeRef}
             type="button"
             aria-label={`Move ${title}`}
-            className="-ml-1 p-1 rounded text-muted hover:text-white hover:bg-surface-hover cursor-grab active:cursor-grabbing touch-none"
+            className="-ml-1 p-1 rounded-sm text-muted hover:text-white hover:bg-surface-hover cursor-grab active:cursor-grabbing touch-none"
             {...attributes}
             {...listeners}
           >
