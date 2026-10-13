@@ -4,9 +4,13 @@ import { WS_MAX_RECONNECT_ATTEMPTS, WS_RECONNECT_DELAY } from "@/shared/utils/co
 import { useWebSocket } from "./useWebSocket";
 
 class MockWebSocket {
+  static CONNECTING = 0;
+  static OPEN = 1;
+  static CLOSED = 3;
   static instances: MockWebSocket[] = [];
 
   url: string;
+  readyState = MockWebSocket.CONNECTING;
   closed = false;
   onopen: (() => void) | null = null;
   onmessage: ((event: { data: string }) => void) | null = null;
@@ -19,12 +23,14 @@ class MockWebSocket {
   }
 
   close() {
+    this.readyState = MockWebSocket.CLOSED;
     this.closed = true;
     this.onclose?.();
   }
 
   // Helpers that simulate what the server does.
   open() {
+    this.readyState = MockWebSocket.OPEN;
     this.onopen?.();
   }
 
@@ -99,12 +105,30 @@ describe("useWebSocket", () => {
 
   it("closes the socket on unmount and does not reconnect afterwards", () => {
     const { unmount } = renderHook(() => useWebSocket({ url: "wss://test/a", onMessage: vi.fn() }));
+    act(() => latest()?.open());
 
     unmount();
     act(() => vi.advanceTimersByTime(WS_RECONNECT_DELAY * 2));
 
     expect(MockWebSocket.instances).toHaveLength(1);
     expect(MockWebSocket.instances[0]?.closed).toBe(true);
+  });
+
+  it("closes a socket that is still connecting once it opens, without delivering messages", () => {
+    const onMessage = vi.fn();
+    const { unmount } = renderHook(() => useWebSocket({ url: "wss://test/a", onMessage }));
+    const socket = latest();
+
+    unmount();
+    expect(socket?.closed).toBe(false);
+
+    act(() => {
+      socket?.open();
+      socket?.receive('{"late":true}');
+    });
+    expect(socket?.closed).toBe(true);
+    expect(onMessage).not.toHaveBeenCalled();
+    expect(MockWebSocket.instances).toHaveLength(1);
   });
 
   it("drops the old stream when the URL changes, so stale data never reaches onMessage", () => {

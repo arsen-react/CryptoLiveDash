@@ -77,7 +77,12 @@ export function useWebSocket<T>({
     return () => {
       disposed = true;
       clearTimeout(reconnectTimer);
-      ws?.close();
+      const socket = ws;
+      if (socket?.readyState === WebSocket.CONNECTING) {
+        socket.onopen = () => socket.close();
+      } else {
+        socket?.close();
+      }
       ws = null;
       reconnectCountRef.current = 0;
     };
