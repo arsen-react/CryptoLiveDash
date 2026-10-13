@@ -53,6 +53,17 @@ describe("MarketOverview", () => {
     expect(screen.getByTestId("current-path")).toHaveTextContent(/^\/$/);
   });
 
+  it("opens a pair from the keyboard", async () => {
+    const { user, store } = renderWithProviders(<MarketOverview />, { route: "/market" });
+
+    await user.tab();
+    await user.tab();
+    await user.keyboard("{Enter}");
+
+    expect(store.getState().market.selectedSymbol).toBe("ETHUSDT");
+    expect(screen.getByTestId("current-path")).toHaveTextContent(/^\/$/);
+  });
+
   it("labels demo data when the API is unavailable", () => {
     vi.mocked(useGetTickersQuery).mockReturnValue(queryResult(undefined));
     renderWithProviders(<MarketOverview />);

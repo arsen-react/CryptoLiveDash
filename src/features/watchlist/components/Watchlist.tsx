@@ -4,6 +4,7 @@ import { CoinSearch } from "@/shared/components/CoinSearch";
 import { Modal } from "@/shared/components/Modal";
 import { PriceChange } from "@/shared/components/PriceChange";
 import { formatPrice, formatVolume } from "@/shared/utils/formatters";
+import { onEnterOrSpace } from "@/shared/utils/keyboard";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addToWatchlist, removeFromWatchlist } from "../watchlistSlice";
@@ -61,8 +62,10 @@ export default function Watchlist() {
             return (
               <div
                 key={item.symbol}
+                tabIndex={0}
                 className="widget-card widget-body cursor-pointer hover:border-accent/30 transition-colors"
                 onClick={() => handleClickCoin(item.symbol)}
+                onKeyDown={onEnterOrSpace(() => handleClickCoin(item.symbol))}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div>

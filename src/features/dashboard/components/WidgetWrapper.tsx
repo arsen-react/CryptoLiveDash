@@ -63,7 +63,7 @@ export function WidgetWrapper({
               <circle cx="8" cy="9.5" r="1" />
             </svg>
           </button>
-          <h3 className="widget-title">{title}</h3>
+          <h2 className="widget-title">{title}</h2>
         </div>
         <div className="flex items-center gap-3">
           {extra}

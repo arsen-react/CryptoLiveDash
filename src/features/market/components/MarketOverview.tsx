@@ -5,6 +5,7 @@ import type { Ticker } from "@/shared/types/market";
 import { cn } from "@/shared/utils/cn";
 import { TOP_SYMBOLS } from "@/shared/utils/constants";
 import { formatPrice, formatVolume } from "@/shared/utils/formatters";
+import { onEnterOrSpace } from "@/shared/utils/keyboard";
 import { generateMockTickers } from "@/shared/utils/mockData";
 import { useNavigate } from "react-router-dom";
 import { useGetTickersQuery } from "../marketApi";
@@ -73,7 +74,9 @@ export default function MarketOverview() {
               return (
                 <tr
                   key={ticker.symbol}
+                  tabIndex={0}
                   onClick={() => handleRowClick(ticker.symbol)}
+                  onKeyDown={onEnterOrSpace(() => handleRowClick(ticker.symbol))}
                   className={cn(
                     "border-b border-border/50 hover:bg-surface-hover transition-colors cursor-pointer",
                     isSelected && "bg-accent/5 border-l-2 border-l-accent",

@@ -21,6 +21,7 @@ describe("PriceTicker", () => {
       ],
     });
 
+    expect(screen.getByRole("complementary", { name: "Live prices" })).toBeInTheDocument();
     expect(screen.getAllByText("BTC")).toHaveLength(2);
     expect(screen.getAllByText("$60,000.00")).toHaveLength(2);
     expect(screen.getAllByText("+1.25%")).toHaveLength(2);

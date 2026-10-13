@@ -33,11 +33,14 @@ export const PriceTicker = memo(function PriceTicker() {
   });
 
   return (
-    <div className="h-8 bg-surface border-b border-border flex items-center overflow-hidden relative">
+    <aside
+      aria-label="Live prices"
+      className="h-8 bg-surface border-b border-border flex items-center overflow-hidden relative"
+    >
       <div className="flex items-center ticker-scroll">
         {tickerContent}
         {tickerContent}
       </div>
-    </div>
+    </aside>
   );
 });

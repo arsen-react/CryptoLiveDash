@@ -59,6 +59,20 @@ describe("Watchlist", () => {
     expect(screen.getByTestId("current-path")).toHaveTextContent(/^\/$/);
   });
 
+  it("opens a coin from the keyboard, but Enter on Remove only removes", async () => {
+    const { user, store } = renderWithProviders(<Watchlist />, { route: "/watchlist" });
+    const ethCard = screen.getByText("ETH").closest(".widget-card") as HTMLElement;
+
+    card("BTC").getByRole("button", { name: "Remove" }).focus();
+    await user.keyboard("{Enter}");
+    expect(screen.getByTestId("current-path")).toHaveTextContent("/watchlist");
+
+    ethCard.focus();
+    await user.keyboard(" ");
+    expect(store.getState().market.selectedSymbol).toBe("ETHUSDT");
+    expect(screen.getByTestId("current-path")).toHaveTextContent(/^\/$/);
+  });
+
   it("removes a coin without opening it", async () => {
     const { user, store } = renderWithProviders(<Watchlist />, { route: "/watchlist" });
 
