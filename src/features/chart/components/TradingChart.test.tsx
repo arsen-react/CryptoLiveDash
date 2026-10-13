@@ -140,6 +140,39 @@ describe("TradingChart", () => {
     expect(chart.candles.setData.mock.lastCall?.[0]).toHaveLength(200);
   });
 
+  it("shows when the live stream last updated, per pair", () => {
+    vi.mocked(useGetKlinesQuery).mockReturnValue(
+      queryResult(undefined, { error: { status: "FETCH_ERROR" } }),
+    );
+    const { store } = renderWithProviders(<TradingChart />);
+    expect(screen.getByText("Demo data")).toBeInTheDocument();
+
+    act(() =>
+      lastSocket().onMessage({
+        e: "kline",
+        s: "BTCUSDT",
+        k: {
+          t: T0,
+          T: T0 + HOUR - 1,
+          s: "BTCUSDT",
+          i: "1h",
+          o: "1",
+          c: "2",
+          h: "2",
+          l: "1",
+          v: "5",
+        },
+      }),
+    );
+    expect(screen.queryByText("Demo data")).not.toBeInTheDocument();
+    expect(screen.getByText("just now")).toBeInTheDocument();
+
+    act(() => {
+      store.dispatch(setSelectedSymbol("ETHUSDT"));
+    });
+    expect(screen.getByText("Demo data")).toBeInTheDocument();
+  });
+
   it("sizes itself to its container and is removed when unmounted", () => {
     const { unmount } = renderWithProviders(<TradingChart />);
     expect(chart.createChart).toHaveBeenCalledWith(

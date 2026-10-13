@@ -128,4 +128,33 @@ describe("useWebSocket", () => {
     act(() => btcSocket?.receive('{"s":"BTCUSDT"}'));
     expect(onMessage).not.toHaveBeenCalled();
   });
+
+  it("uses the latest onMessage without reconnecting", () => {
+    const first = vi.fn();
+    const second = vi.fn();
+    const { rerender } = renderHook(
+      ({ onMessage }: { onMessage: (data: unknown) => void }) =>
+        useWebSocket({ url: "wss://test/a", onMessage }),
+      { initialProps: { onMessage: first } },
+    );
+
+    rerender({ onMessage: second });
+    act(() => latest()?.receive('{"n":1}'));
+
+    expect(MockWebSocket.instances).toHaveLength(1);
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledWith({ n: 1 });
+  });
+
+  it("reports how many reconnects it has tried, and resets once connected", () => {
+    const { result } = renderHook(() => useWebSocket({ url: "wss://test/a", onMessage: vi.fn() }));
+
+    act(() => latest()?.drop());
+    act(() => latest()?.drop());
+    expect(result.current.reconnectCount).toBe(2);
+
+    act(() => vi.advanceTimersByTime(WS_RECONNECT_DELAY));
+    act(() => latest()?.open());
+    expect(result.current.reconnectCount).toBe(0);
+  });
 });

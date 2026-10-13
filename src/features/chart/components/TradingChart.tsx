@@ -14,7 +14,7 @@ import {
   type ISeriesApi,
   type UTCTimestamp,
 } from "lightweight-charts";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { TimeframeSelector } from "./TimeframeSelector";
 
 export default function TradingChart() {
@@ -22,19 +22,27 @@ export default function TradingChart() {
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<number | null>(null);
-  const [usingMock, setUsingMock] = useState(false);
-
   const symbol = useAppSelector((state) => state.market.selectedSymbol);
   const timeframe = useAppSelector((state) => state.chart.timeframe);
   const showVolume = useAppSelector((state) => state.chart.showVolume);
+  const stream = `${symbol.toLowerCase()}@kline_${timeframe}`;
+  // When the latest live candle arrived, for the stream it came from.
+  const [liveUpdate, setLiveUpdate] = useState<{ stream: string; at: number } | null>(null);
 
-  const { data: klines, isLoading, error } = useGetKlinesQuery({ symbol, interval: timeframe });
+  const {
+    data: klines,
+    isLoading,
+    error,
+    fulfilledTimeStamp,
+  } = useGetKlinesQuery({ symbol, interval: timeframe });
 
-  const chartData: Kline[] = klines ?? generateMockKlines(symbol);
+  const chartData: Kline[] = useMemo(() => klines ?? generateMockKlines(symbol), [klines, symbol]);
   const isMock = !klines;
+  const liveAt = liveUpdate?.stream === stream ? liveUpdate.at : null;
+  const lastUpdated = liveAt ?? (klines ? (fulfilledTimeStamp ?? null) : null);
+  const usingMock = isMock && liveAt === null;
 
-  const handleKlineMessage = useCallback((data: WebSocketKlineMessage) => {
+  function handleKlineMessage(data: WebSocketKlineMessage) {
     if (!candleSeriesRef.current || !volumeSeriesRef.current) return;
     const k = data.k;
     if (!k) return;
@@ -52,12 +60,11 @@ export default function TradingChart() {
       value: parseFloat(k.v),
       color: parseFloat(k.c) >= parseFloat(k.o) ? "#22c55e33" : "#ef444433",
     });
-    setLastUpdated(Date.now());
-    setUsingMock(false);
-  }, []);
+    setLiveUpdate({ stream, at: Date.now() });
+  }
 
   useWebSocket<WebSocketKlineMessage>({
-    url: `${BINANCE_WS_URL}/${symbol.toLowerCase()}@kline_${timeframe}`,
+    url: `${BINANCE_WS_URL}/${stream}`,
     onMessage: handleKlineMessage,
   });
 
@@ -146,14 +153,7 @@ export default function TradingChart() {
     volumeSeriesRef.current.applyOptions({ visible: showVolume });
 
     chartRef.current?.timeScale().fitContent();
-
-    if (klines) {
-      setLastUpdated(Date.now());
-      setUsingMock(false);
-    } else {
-      setUsingMock(true);
-    }
-  }, [chartData, showVolume, klines]);
+  }, [chartData, showVolume]);
 
   return (
     <div>

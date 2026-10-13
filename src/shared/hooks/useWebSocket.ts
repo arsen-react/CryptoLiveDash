@@ -1,5 +1,5 @@
 import { WS_MAX_RECONNECT_ATTEMPTS, WS_RECONNECT_DELAY } from "@/shared/utils/constants";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 interface UseWebSocketOptions<T> {
   url: string;
@@ -18,10 +18,10 @@ export function useWebSocket<T>({
   enabled = true,
 }: UseWebSocketOptions<T>): UseWebSocketReturn {
   const reconnectCountRef = useRef(0);
-  const onMessageRef = useRef(onMessage);
+  const [reconnectCount, setReconnectCount] = useState(0);
   const [status, setStatus] = useState<UseWebSocketReturn["status"]>("closed");
-
-  onMessageRef.current = onMessage;
+  // Calls the latest onMessage, so a new callback does not reconnect the socket.
+  const handleMessage = useEffectEvent(onMessage);
 
   useEffect(() => {
     if (!enabled) return;
@@ -42,13 +42,14 @@ export function useWebSocket<T>({
         if (disposed) return;
         setStatus("open");
         reconnectCountRef.current = 0;
+        setReconnectCount(0);
       };
 
       socket.onmessage = (event: MessageEvent) => {
         if (disposed) return;
         try {
           const data = JSON.parse(event.data as string) as T;
-          onMessageRef.current(data);
+          handleMessage(data);
         } catch {
           // skip malformed messages
         }
@@ -66,6 +67,7 @@ export function useWebSocket<T>({
 
         if (reconnectCountRef.current < WS_MAX_RECONNECT_ATTEMPTS) {
           reconnectCountRef.current += 1;
+          setReconnectCount(reconnectCountRef.current);
           reconnectTimer = setTimeout(connect, WS_RECONNECT_DELAY);
         }
       };
@@ -82,5 +84,5 @@ export function useWebSocket<T>({
     };
   }, [url, enabled]);
 
-  return { status, reconnectCount: reconnectCountRef.current };
+  return { status, reconnectCount };
 }

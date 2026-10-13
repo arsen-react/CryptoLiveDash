@@ -9,10 +9,11 @@ interface LastUpdatedProps {
 }
 
 export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdatedProps) {
-  const [, forceUpdate] = useState(0);
+  // The clock is state, so rendering stays pure; the interval moves it on.
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 10_000);
+    const interval = setInterval(() => setNow(Date.now()), 10_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -24,7 +25,7 @@ export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdate
 
   if (!timestamp) return null;
 
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  const seconds = Math.floor((now - timestamp) / 1000);
 
   let label: string;
   if (seconds < 5) label = "just now";
