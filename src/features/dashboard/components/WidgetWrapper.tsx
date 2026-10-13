@@ -8,14 +8,12 @@ interface WidgetWrapperProps {
   id: string;
   title: string;
   children: ReactNode;
-  /** Shown in the header, before the hide button. */
   extra?: ReactNode;
   onHide?: () => void;
   className?: string;
   bodyClassName?: string;
 }
 
-/** Dashboard card that can be dragged by its handle, with the mouse or the keyboard. */
 export function WidgetWrapper({
   id,
   title,

@@ -9,7 +9,6 @@ interface LastUpdatedProps {
 }
 
 export function LastUpdated({ timestamp, isLive, isMock, className }: LastUpdatedProps) {
-  // The clock is state, so rendering stays pure; the interval moves it on.
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {

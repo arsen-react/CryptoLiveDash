@@ -8,7 +8,6 @@ import { makeStore, type AppStore, type RootState } from "@/app/store";
 
 interface ProviderOptions extends Omit<RenderOptions, "wrapper"> {
   preloadedState?: Partial<RootState>;
-  /** Dispatched before the first render, to set up state with the real reducers. */
   actions?: UnknownAction[];
   store?: AppStore;
   route?: string;
@@ -18,10 +17,6 @@ function CurrentPath() {
   return <output data-testid="current-path">{useLocation().pathname}</output>;
 }
 
-/**
- * Renders `ui` with a fresh store and an in-memory router. The current path is shown in
- * the `current-path` test id, so tests can check navigation.
- */
 export function renderWithProviders(
   ui: ReactElement,
   {

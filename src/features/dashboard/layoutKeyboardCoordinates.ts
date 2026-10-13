@@ -6,11 +6,6 @@ interface SortableData {
   sortable?: { index: number; items: UniqueIdentifier[] };
 }
 
-/**
- * Arrow keys move the dragged widget one place earlier or later in the layout order.
- * dnd-kit's default picks the nearest widget in the arrow's direction, which on a grid of
- * mixed widths can jump to another row.
- */
 export const layoutKeyboardCoordinates: KeyboardCoordinateGetter = (event, { context }) => {
   const step = STEPS[event.code];
   const { active, over, collisionRect, droppableRects } = context;
@@ -23,7 +18,6 @@ export const layoutKeyboardCoordinates: KeyboardCoordinateGetter = (event, { con
   const target = targetId === undefined ? undefined : droppableRects.get(targetId);
   if (!target) return undefined;
 
-  // Centre the widget on the target, so centre-based collision picks exactly that widget.
   return {
     x: target.left + target.width / 2 - collisionRect.width / 2,
     y: target.top + target.height / 2 - collisionRect.height / 2,

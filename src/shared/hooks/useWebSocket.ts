@@ -20,7 +20,6 @@ export function useWebSocket<T>({
   const reconnectCountRef = useRef(0);
   const [reconnectCount, setReconnectCount] = useState(0);
   const [status, setStatus] = useState<UseWebSocketReturn["status"]>("closed");
-  // Calls the latest onMessage, so a new callback does not reconnect the socket.
   const handleMessage = useEffectEvent(onMessage);
 
   useEffect(() => {

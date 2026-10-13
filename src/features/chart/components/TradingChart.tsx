@@ -26,7 +26,6 @@ export default function TradingChart() {
   const timeframe = useAppSelector((state) => state.chart.timeframe);
   const showVolume = useAppSelector((state) => state.chart.showVolume);
   const stream = `${symbol.toLowerCase()}@kline_${timeframe}`;
-  // When the latest live candle arrived, for the stream it came from.
   const [liveUpdate, setLiveUpdate] = useState<{ stream: string; at: number } | null>(null);
 
   const {

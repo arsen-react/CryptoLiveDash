@@ -49,7 +49,6 @@ const WIDGETS: Partial<Record<WidgetType, { render: () => ReactNode; bodyClassNa
   portfolio: { render: () => <MiniPortfolio /> },
 };
 
-// Tailwind only generates classes it can find written out in full.
 const COLUMN_SPANS: Record<number, string> = {
   3: "xl:col-span-3",
   4: "xl:col-span-4",

@@ -44,7 +44,6 @@ export function kline(openTime: number, open: number, close: number, volume = 10
   };
 }
 
-/** The fields of an RTK Query hook result that the components read. */
 export function queryResult<T>(data: T | undefined, overrides: Record<string, unknown> = {}) {
   return {
     data,

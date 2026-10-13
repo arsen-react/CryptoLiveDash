@@ -6,7 +6,6 @@ import type { PriceAlert } from "@/shared/types/portfolio";
 import { formatPrice } from "@/shared/utils/formatters";
 import { triggerAlert } from "./alertsSlice";
 
-/** Active alerts whose target the live price has reached, with that price. */
 export function findTriggeredAlerts(
   alerts: readonly PriceAlert[],
   liveTickers: Record<string, Ticker>,
@@ -23,7 +22,6 @@ export function findTriggeredAlerts(
 }
 
 function notify(alert: PriceAlert, price: number) {
-  // Some browsers (older iOS Safari, in-app webviews) have no Notification API.
   if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
 
   const asset = alert.symbol.replace("USDT", "");
@@ -33,9 +31,6 @@ function notify(alert: PriceAlert, price: number) {
   });
 }
 
-/**
- * Checks the alerts on every price update, so they fire whichever page is open.
- */
 export const alertsListener = createListenerMiddleware();
 
 alertsListener.startListening.withTypes<RootState, AppDispatch>()({

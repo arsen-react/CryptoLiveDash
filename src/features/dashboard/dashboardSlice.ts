@@ -84,7 +84,6 @@ const dashboardSlice = createSlice({
       state.widgets = action.payload;
       saveToStorage(STORAGE_KEY, state.widgets);
     },
-    /** Moves a widget to the position of another one, as a drag and drop does. */
     moveWidget(state, action: PayloadAction<{ id: string; overId: string }>) {
       const from = state.widgets.findIndex((w) => w.id === action.payload.id);
       const to = state.widgets.findIndex((w) => w.id === action.payload.overId);

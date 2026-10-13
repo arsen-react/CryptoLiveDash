@@ -27,10 +27,6 @@ const DEFAULT_ORDER = ["Trading Chart", "Order Book", "Market Overview", "Watchl
 const widgetOrder = () =>
   screen.getAllByRole("region").map((section) => section.getAttribute("aria-label"));
 
-/**
- * jsdom has no layout. Give each widget the box it has in the browser at 1440px: chart and
- * order book on the first row, the three smaller widgets on the second.
- */
 const GRID: Record<string, [left: number, top: number, width: number, height: number]> = {
   "Trading Chart": [0, 0, 888, 480],
   "Order Book": [904, 0, 440, 480],

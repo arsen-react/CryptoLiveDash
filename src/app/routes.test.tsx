@@ -23,7 +23,6 @@ vi.mock("@/features/market/marketApi", async (importOriginal) => ({
 }));
 vi.mock("lightweight-charts", () => import("@/test/lightweight-charts"));
 
-// Pages are lazy chunks; a cold, instrumented first load on a busy machine can take seconds.
 const LAZY_PAGE = { timeout: 10_000 };
 
 describe("routes", () => {

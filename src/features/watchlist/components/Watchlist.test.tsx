@@ -12,7 +12,6 @@ vi.mock("@/features/market/marketApi", async (importOriginal) => ({
   useGetTickersQuery: vi.fn(),
 }));
 
-// The slice starts with BTC, ETH and SOL; tests start from an empty list.
 const emptyList = ["BTCUSDT", "ETHUSDT", "SOLUSDT"].map((symbol) => removeFromWatchlist(symbol));
 
 const card = (asset: string) =>
